@@ -1,0 +1,58 @@
+{
+  "desde": "2018-12",
+  "hasta": "2026-08",
+  "observaciones": 93,
+  "meses_ausentes": 0,
+  "faltantes_indice_total": 0,
+  "columnas_con_faltantes": {
+    "T_Otros": 25,
+    "Clorpirifos": 32,
+    "Fipronil": 24,
+    "T_Coadyuvantes": 25,
+    "T_Reguladores": 25,
+    "T_Molusquicidas": 25
+  },
+  "primer_mes_otros_insumos": "2021-01",
+  "ultimo_mes_clorpirifos": "2023-12",
+  "ultimo_mes_fipronil": "2024-08",
+  "cambios_de_canasta": {
+    "ene_2024_amplia_canasta": {
+      "variacion_mes_pct": -1.63,
+      "z_robusto": -1.02
+    },
+    "sep_2024_excluye_fipronil": {
+      "variacion_mes_pct": 0.22,
+      "z_robusto": 0.06
+    }
+  },
+  "meses_atipicos_z_mayor_3": [
+    "2021-08",
+    "2021-09",
+    "2021-11",
+    "2021-12",
+    "2022-01",
+    "2022-04",
+    "2022-05",
+    "2023-07",
+    "2023-08",
+    "2026-04",
+    "2026-05"
+  ],
+  "comparacion_datos_abiertos": {
+    "meses_comparados": 93,
+    "diferencia_maxima": 0.005,
+    "ultima_fecha_api": "2026-08"
+  },
+  "correlacion_variacion_12m_sipsa_vs_upra": {
+    "Fertilizantes": 0.915,
+    "Herbicidas": 0.983,
+    "Fungicidas": 0.869,
+    "Insecticidas": 0.958
+  },
+  "sipsa_ultima_fecha": "2026-09",
+  "exogenas_ultima_fecha": {
+    "trm": "2026-11",
+    "urea_usd": "2026-10",
+    "dap_usd": "2026-10"
+  }
+}
