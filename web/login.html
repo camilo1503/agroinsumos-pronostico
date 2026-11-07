@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ingresar | Agroinsumos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<div class="acceso">
+  <div class="acceso-lado">
+    <a href="index.html">Ver la documentación del proyecto</a>
+    <div class="grado" aria-hidden="true">15-15-15</div>
+    <div>
+      <h1>Plataforma de agroinsumos</h1>
+      <p>Proyección del índice nacional, presupuesto, alertas y reportes.</p>
+    </div>
+  </div>
+  <form class="acceso-form" id="form">
+    <h2 id="titulo">Inicia sesión</h2>
+    <label>Correo<input type="email" id="correo" autocomplete="email" required></label>
+    <label>Contraseña<input type="password" id="clave" autocomplete="current-password" minlength="8" required></label>
+    <button type="submit" id="enviar">Iniciar sesión</button>
+    <p class="mensaje" id="mensaje" role="status"></p>
+    <p><button type="button" class="enlace" id="cambiar">Crear una cuenta</button></p>
+  </form>
+</div>
+<script type="module" src="js/login.js"></script>
+</body>
+</html>

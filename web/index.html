@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pronóstico de agroinsumos</title>
+<meta name="description" content="Documentación pública del proyecto de Machine Learning: pronóstico a seis meses del índice nacional de precios de agroinsumos agrícolas en Colombia con CRISP-ML(Q).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<header class="barra">
+  <strong>Agroinsumos Colombia</strong>
+  <a class="boton" href="login.html">Entrar a la plataforma</a>
+</header>
+
+<div class="portada">
+  <h1>Pronóstico de variaciones de precios de agroinsumos colombianos</h1>
+  <p class="entrada">Proyecto de la materia Machine Learning. Evaluamos si los datos oficiales permiten anticipar a seis meses el índice nacional de precios de insumos agrícolas, y qué tanto confiar en esa señal.</p>
+  <div id="g-portada"></div>
+</div>
+
+<div class="doc">
+  <nav class="indice-doc" aria-label="Secciones">
+    <a href="#problema">Problema</a>
+    <a href="#negocio">Entendimiento del negocio</a>
+    <a href="#fases">Fases CRISP-ML(Q)</a>
+    <a href="#modelos">Tres modelos y selección</a>
+    <a href="#plataforma">Plataforma inteligente</a>
+    <a href="#datos">Datos y calidad</a>
+    <a href="#limites">Limitaciones</a>
+    <a href="#reproducir">Reproducir</a>
+    <a href="#referencias">Referencias</a>
+  </nav>
+
+  <div>
+    <section id="problema">
+      <h2>Problema</h2>
+      <p>Fertilizantes y plaguicidas pesan en los costos de producción. Cuando sus precios cambian de forma difícil de anticipar, a quien produce le cuesta presupuestar, programar compras y estimar márgenes. Entre 2021 y 2022 el índice nacional pasó de 100 a más de 220 puntos.</p>
+      <p><strong>Pregunta orientadora:</strong> ¿qué desempeño alcanzan modelos estadísticos y de aprendizaje automático, organizados con CRISP-ML(Q), al pronosticar a seis meses la variación del índice nacional de precios de agroinsumos agrícolas, frente a modelos de referencia sencillos?</p>
+      <p>El proyecto no predice el precio que pagará cada agricultor ni demuestra relaciones causales. Genera una señal agregada, con su incertidumbre, para apoyar la planeación.</p>
+    </section>
+
+    <section id="negocio">
+      <h2>Entendimiento del negocio</h2>
+      <div class="dos-col">
+        <div>
+          <h3>Quién usa la señal</h3>
+          <p>Agricultores, asistentes técnicos y organizaciones productivas que preparan presupuestos de insumos.</p>
+          <h3>Qué decisión apoya</h3>
+          <p>Cuánto reservar para insumos en el próximo semestre y cuándo revisar cotizaciones con proveedores.</p>
+        </div>
+        <div>
+          <h3>Criterio de éxito</h3>
+          <p>El modelo debe mejorar de manera consistente a la persistencia en evaluación temporal. No se fijó una precisión anticipada.</p>
+          <h3>Riesgos identificados</h3>
+          <p>Serie mensual corta, cambios de canasta en 2024, choques internacionales y distancia entre el índice nacional y el precio que paga cada productor.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="fases">
+      <h2>Fases de la metodología CRISP-ML(Q)</h2>
+      <ol class="fases">
+        <li><div><h3>Comprensión del negocio y de los datos</h3><p>Definimos usuario, decisión, variable objetivo y riesgos. Inventariamos el índice UPRA, SIPSA-I del DANE, la TRM y los precios del Banco Mundial.</p></div></li>
+        <li><div><h3>Preparación de datos</h3><p id="f-preparacion">Auditamos continuidad, faltantes y atípicos, y examinamos el efecto de los cambios de canasta.</p></div></li>
+        <li><div><h3>Modelado</h3><p>Entrenamos dos referencias y tres candidatos. Cada modelo ve únicamente los datos disponibles hasta su mes de origen.</p></div></li>
+        <li><div><h3>Evaluación</h3><p id="f-evaluacion">Validación temporal progresiva a seis meses, con MAE, RMSE y MASE por horizonte, y un bloque final reservado.</p></div></li>
+        <li><div><h3>Despliegue</h3><p>Plataforma con inicio de sesión, base de datos en Supabase y esta documentación pública.</p></div></li>
+        <li><div><h3>Monitorización y mantenimiento</h3><p>Cada corrida queda versionada. Al publicarse un valor oficial nuevo, la plataforma calcula el error del pronóstico publicado antes.</p></div></li>
+      </ol>
+    </section>
+
+    <section id="modelos">
+      <h2>Tres modelos y selección</h2>
+      <p><strong>ETS</strong> suaviza el nivel y la tendencia. <strong>SARIMA</strong> modela la dependencia entre meses, con el orden elegido por AICc en cada origen. <strong>Ridge directo</strong> es el modelo de aprendizaje automático: entrena un modelo por horizonte con rezagos del índice, TRM y precios internacionales de urea y DAP. Persistencia y estacional ingenuo sirven de referencia.</p>
+      <p>La regla se fijó antes de mirar la prueba: gana el candidato con menor MASE en validación, y si ninguno supera a persistencia, se conserva persistencia.</p>
+      <div class="tabla-scroll"><table id="t-modelos"></table></div>
+      <div class="veredicto" id="veredicto"></div>
+      <h3>Error por horizonte en el bloque de prueba</h3>
+      <div id="g-horizonte"></div>
+    </section>
+
+    <section id="plataforma">
+      <h2>Plataforma inteligente</h2>
+      <p>Después de iniciar sesión, cada persona encuentra estos procesos:</p>
+      <div class="dos-col">
+        <div>
+          <h3>Proyección</h3><p>Pronóstico a seis meses con intervalos de 80 % y 95 % para el índice total, fertilizantes y plaguicidas.</p>
+          <h3>Presupuesto</h3><p>Traduce la variación estimada a un escenario de gasto propio.</p>
+          <h3>Alertas</h3><p>Reglas personales que se evalúan con cada nueva corrida del modelo.</p>
+        </div>
+        <div>
+          <h3>Reportes</h3><p>Descarga en CSV o impresión en PDF de proyección, presupuesto y alertas.</p>
+          <h3>Precios SIPSA</h3><p>Consulta de precios observados por producto y departamento, y contraste con el índice.</p>
+          <h3>Monitoreo</h3><p>Pronóstico frente a observado, cobertura de intervalos y señal de degradación.</p>
+        </div>
+      </div>
+      <p><a class="boton" href="login.html">Entrar a la plataforma</a></p>
+    </section>
+
+    <section id="datos">
+      <h2>Datos y calidad</h2>
+      <div class="tabla-scroll"><table>
+        <thead><tr><th>Fuente</th><th style="text-align:left">Rol</th></tr></thead>
+        <tbody>
+          <tr><td><a href="https://www.datos.gov.co/Agricultura-y-Desarrollo-Rural/-ndice-de-precios-de-insumos-agr-colas/gwbi-fnzs/about_data">Índice de precios de insumos agrícolas, UPRA</a></td><td style="text-align:left">Variable objetivo</td></tr>
+          <tr><td><a href="https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/componente-insumos-1/componente-insumos-historicos">SIPSA-I, DANE</a></td><td style="text-align:left">Contraste con precios observados</td></tr>
+          <tr><td><a href="https://www.datos.gov.co/Econom-a-y-Finanzas/Tasa-de-Cambio-Representativa-del-Mercado-Historic/mcec-87by">TRM, Superintendencia Financiera</a></td><td style="text-align:left">Predictor exploratorio</td></tr>
+          <tr><td><a href="https://www.worldbank.org/en/research/commodity-markets">Pink Sheet, Banco Mundial</a></td><td style="text-align:left">Predictor exploratorio (urea y DAP)</td></tr>
+        </tbody>
+      </table></div>
+      <ul id="l-calidad"></ul>
+    </section>
+
+    <section id="limites">
+      <h2>Limitaciones</h2>
+      <ul>
+        <li>El índice mide una variación promedio nacional. No reemplaza una cotización ni representa cada cultivo, región o presentación comercial.</li>
+        <li>La serie es corta para modelos complejos, y el bloque de prueba solo tiene doce orígenes.</li>
+        <li>Los intervalos se calibran con errores pasados, incluido el choque de 2021 y 2022. No garantizan cubrir un choque nuevo.</li>
+        <li>Los resultados no son asesoría financiera, garantía de precios ni evidencia causal.</li>
+      </ul>
+    </section>
+
+    <section id="reproducir">
+      <h2>Reproducir los resultados</h2>
+<pre>pip install -r requirements.txt
+python -m pytest
+python -m src.pipeline --actualizar-fuentes</pre>
+      <p id="versiones" class="pequeno"></p>
+    </section>
+
+    <section id="referencias">
+      <h2>Referencias</h2>
+      <p>Datos Abiertos Colombia. (s. f.). <em>Índice de precios de insumos agrícolas</em>. https://www.datos.gov.co/Agricultura-y-Desarrollo-Rural/-ndice-de-precios-de-insumos-agr-colas/gwbi-fnzs/about_data</p>
+      <p>Departamento Administrativo Nacional de Estadística. (2025). <em>Insumos y factores asociados a la producción agropecuaria (SIPSA-I): Boletín técnico, junio de 2025</em>. https://www.dane.gov.co/files/operaciones/SIPSA/bol-SIPSAinsumos-jun2025.pdf</p>
+      <p>Hewamalage, H., Ackermann, K., &amp; Bergmeir, C. (2023). Forecast evaluation for data scientists: Common pitfalls and best practices. <em>Data Mining and Knowledge Discovery, 37</em>, 788–832. https://doi.org/10.1007/s10618-022-00894-5</p>
+      <p>Studer, S., Bui, T. B., Drescher, C., Hanuschkin, A., Winkler, L., Peters, S., &amp; Müller, K.-R. (2021). Towards CRISP-ML(Q): A machine learning process model with quality assurance methodology. <em>Machine Learning and Knowledge Extraction, 3</em>(2), 392–413. https://doi.org/10.3390/make3020020</p>
+      <p>Superintendencia Financiera de Colombia. (s. f.). <em>Tasa de cambio representativa del mercado (TRM) histórica</em>. https://www.datos.gov.co/Econom-a-y-Finanzas/Tasa-de-Cambio-Representativa-del-Mercado-Historic/mcec-87by</p>
+      <p>Unidad de Planificación Rural Agropecuaria. (s. f.). <em>Índice de precios: Ficha técnica</em>. https://upra.gov.co/es-co/indice_precios/ficha-tecnica</p>
+      <p>World Bank. (s. f.). <em>Commodity markets: Pink Sheet</em>. https://www.worldbank.org/en/research/commodity-markets</p>
+    </section>
+  </div>
+</div>
+<script type="module" src="js/documentacion.js"></script>
+</body>
+</html>
