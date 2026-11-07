@@ -1,0 +1,320 @@
+{
+  "ejecutado_en": "2026-11-07T13:15:30+00:00",
+  "fecha_corte": "2026-08-01",
+  "modelo_seleccionado": "sarima",
+  "nombre_modelo": "SARIMA",
+  "supera_persistencia_validacion": true,
+  "supera_persistencia_prueba": false,
+  "origenes": {
+    "validacion": 40,
+    "prueba": 12,
+    "validacion_desde": "2021-11",
+    "validacion_hasta": "2025-02",
+    "prueba_desde": "2025-03",
+    "prueba_hasta": "2026-02"
+  },
+  "pct_pronosticos_mejor_que_persistencia": {
+    "ets": {
+      "prueba": 31.9,
+      "validacion": 82.5
+    },
+    "sarima": {
+      "prueba": 31.9,
+      "validacion": 80.8
+    },
+    "ridge": {
+      "prueba": 41.7,
+      "validacion": 53.8
+    }
+  },
+  "diebold_mariano_h6": {
+    "ets": {
+      "validacion": {
+        "estadistico": 0.005,
+        "p_valor": 0.996,
+        "n": 40
+      },
+      "prueba": {
+        "estadistico": -0.071,
+        "p_valor": 0.945,
+        "n": 12
+      }
+    },
+    "sarima": {
+      "validacion": {
+        "estadistico": 0.306,
+        "p_valor": 0.761,
+        "n": 40
+      },
+      "prueba": {
+        "estadistico": -0.068,
+        "p_valor": 0.947,
+        "n": 12
+      }
+    },
+    "ridge": {
+      "validacion": {
+        "estadistico": -1.542,
+        "p_valor": 0.131,
+        "n": 40
+      },
+      "prueba": {
+        "estadistico": -0.716,
+        "p_valor": 0.489,
+        "n": 12
+      }
+    }
+  },
+  "cobertura_prueba_pct": {
+    "80": 91.7,
+    "95": 100.0
+  },
+  "resumen": {
+    "naive": {
+      "nombre": "Persistencia (referencia)",
+      "validacion": {
+        "mae": 12.781,
+        "rmse": 18.841,
+        "mase": 4.321
+      },
+      "prueba": {
+        "mae": 5.063,
+        "rmse": 9.498,
+        "mase": 1.715
+      }
+    },
+    "snaive": {
+      "nombre": "Estacional ingenuo (referencia)",
+      "validacion": {
+        "mae": 48.827,
+        "rmse": 58.057,
+        "mase": 15.677
+      },
+      "prueba": {
+        "mae": 10.706,
+        "rmse": 12.426,
+        "mase": 3.531
+      }
+    },
+    "ets": {
+      "nombre": "Suavizamiento exponencial (ETS)",
+      "validacion": {
+        "mae": 10.948,
+        "rmse": 20.744,
+        "mase": 3.545
+      },
+      "prueba": {
+        "mae": 5.458,
+        "rmse": 9.195,
+        "mase": 1.837
+      }
+    },
+    "sarima": {
+      "nombre": "SARIMA",
+      "validacion": {
+        "mae": 10.297,
+        "rmse": 18.907,
+        "mase": 3.324
+      },
+      "prueba": {
+        "mae": 5.456,
+        "rmse": 9.195,
+        "mase": 1.837
+      }
+    },
+    "ridge": {
+      "nombre": "Ridge directo con variables externas",
+      "validacion": {
+        "mae": 14.118,
+        "rmse": 21.079,
+        "mase": 4.42
+      },
+      "prueba": {
+        "mae": 6.402,
+        "rmse": 9.61,
+        "mase": 2.138
+      }
+    }
+  },
+  "pronostico": {
+    "total": [
+      {
+        "fecha": "2026-09-01",
+        "horizonte": 1,
+        "valor": 159.351,
+        "li80": 156.501,
+        "ls80": 162.253,
+        "li95": 150.81,
+        "ls95": 168.376
+      },
+      {
+        "fecha": "2026-10-01",
+        "horizonte": 2,
+        "valor": 155.922,
+        "li80": 147.647,
+        "ls80": 164.66,
+        "li95": 139.746,
+        "ls95": 173.97
+      },
+      {
+        "fecha": "2026-11-01",
+        "horizonte": 3,
+        "valor": 153.49,
+        "li80": 140.924,
+        "ls80": 167.178,
+        "li95": 129.692,
+        "ls95": 181.656
+      },
+      {
+        "fecha": "2026-12-01",
+        "horizonte": 4,
+        "valor": 151.757,
+        "li80": 137.849,
+        "ls80": 167.069,
+        "li95": 120.597,
+        "ls95": 190.969
+      },
+      {
+        "fecha": "2027-01-01",
+        "horizonte": 5,
+        "valor": 150.517,
+        "li80": 132.958,
+        "ls80": 170.396,
+        "li95": 113.566,
+        "ls95": 199.491
+      },
+      {
+        "fecha": "2027-02-01",
+        "horizonte": 6,
+        "valor": 149.628,
+        "li80": 127.26,
+        "ls80": 175.927,
+        "li95": 106.943,
+        "ls95": 209.35
+      }
+    ],
+    "fertilizantes": [
+      {
+        "fecha": "2026-09-01",
+        "horizonte": 1,
+        "valor": 187.353,
+        "li80": 183.071,
+        "ls80": 191.734,
+        "li95": 174.283,
+        "ls95": 201.402
+      },
+      {
+        "fecha": "2026-10-01",
+        "horizonte": 2,
+        "valor": 182.52,
+        "li80": 170.316,
+        "ls80": 195.599,
+        "li95": 158.514,
+        "ls95": 210.162
+      },
+      {
+        "fecha": "2026-11-01",
+        "horizonte": 3,
+        "valor": 179.21,
+        "li80": 160.011,
+        "ls80": 200.713,
+        "li95": 145.638,
+        "ls95": 220.521
+      },
+      {
+        "fecha": "2026-12-01",
+        "horizonte": 4,
+        "valor": 176.927,
+        "li80": 156.103,
+        "ls80": 200.53,
+        "li95": 133.867,
+        "ls95": 233.839
+      },
+      {
+        "fecha": "2027-01-01",
+        "horizonte": 5,
+        "valor": 175.346,
+        "li80": 147.953,
+        "ls80": 207.81,
+        "li95": 124.671,
+        "ls95": 246.619
+      },
+      {
+        "fecha": "2027-02-01",
+        "horizonte": 6,
+        "valor": 174.247,
+        "li80": 139.876,
+        "ls80": 217.063,
+        "li95": 116.618,
+        "ls95": 260.354
+      }
+    ],
+    "plaguicidas": [
+      {
+        "fecha": "2026-09-01",
+        "horizonte": 1,
+        "valor": 115.235,
+        "li80": 114.304,
+        "ls80": 116.174,
+        "li95": 113.54,
+        "ls95": 116.955
+      },
+      {
+        "fecha": "2026-10-01",
+        "horizonte": 2,
+        "valor": 114.515,
+        "li80": 112.913,
+        "ls80": 116.139,
+        "li95": 111.172,
+        "ls95": 117.958
+      },
+      {
+        "fecha": "2026-11-01",
+        "horizonte": 3,
+        "valor": 113.888,
+        "li80": 111.631,
+        "ls80": 116.19,
+        "li95": 107.57,
+        "ls95": 120.577
+      },
+      {
+        "fecha": "2026-12-01",
+        "horizonte": 4,
+        "valor": 113.295,
+        "li80": 109.918,
+        "ls80": 116.776,
+        "li95": 105.363,
+        "ls95": 121.824
+      },
+      {
+        "fecha": "2027-01-01",
+        "horizonte": 5,
+        "valor": 112.751,
+        "li80": 108.39,
+        "ls80": 117.287,
+        "li95": 102.592,
+        "ls95": 123.916
+      },
+      {
+        "fecha": "2027-02-01",
+        "horizonte": 6,
+        "valor": 112.246,
+        "li80": 107.487,
+        "ls80": 117.216,
+        "li95": 99.63,
+        "ls95": 126.459
+      }
+    ]
+  },
+  "versiones": {
+    "python": "3.13.15",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "statsmodels": "0.15.0"
+  },
+  "huella_datos": {
+    "anexo_upra": "33653a292875f275",
+    "indice_mensual": "a5b534bc7b4f25df"
+  }
+}
