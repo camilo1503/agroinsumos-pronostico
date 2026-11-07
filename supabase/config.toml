@@ -1,0 +1,12 @@
+project_id = "agroinsumos-pronostico"
+
+[auth]
+enabled = true
+site_url = "https://camilo1503.github.io/agroinsumos-pronostico/"
+additional_redirect_urls = ["http://localhost:8000/"]
+enable_signup = true
+minimum_password_length = 8
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false
