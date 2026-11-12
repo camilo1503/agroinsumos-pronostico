@@ -2,7 +2,7 @@
 
 ## Actualización automática
 
-El flujo `.github/workflows/actualizar.yml` corre los lunes y jueves: descarga SIPSA-I, la TRM, el Pink Sheet y el índice de Datos Abiertos, reentrena, ejecuta las pruebas, publica en Supabase, guarda los datos en el repositorio y vuelve a desplegar el sitio. Necesita los secretos `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` en el repositorio. Los meses del índice que el anexo local aún no tiene se toman de Datos Abiertos.
+El flujo `.github/workflows/actualizar.yml` corre los lunes y jueves: descarga SIPSA-I, los precios mayoristas de alimentos del año en curso y el anterior, la TRM, el Pink Sheet y el índice de Datos Abiertos, reentrena, ejecuta las pruebas, publica en Supabase, guarda los datos en el repositorio y vuelve a desplegar el sitio. Necesita los secretos `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` en el repositorio. Los meses del índice que el anexo local aún no tiene se toman de Datos Abiertos.
 
 ## Actualización manual
 

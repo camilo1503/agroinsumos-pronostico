@@ -1,5 +1,5 @@
-import { db } from "./cliente.js";
-import { grafica, fechaUTC, formatoMes, numero, colores } from "./grafica.js";
+import { db } from "./cliente.js?v=1";
+import { grafica, fechaUTC, formatoMes, numero, colores } from "./grafica.js?v=1";
 
 const { data: { session } } = await db.auth.getSession();
 if (!session) location.replace("login.html");

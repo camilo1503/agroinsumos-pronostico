@@ -2,34 +2,47 @@
 
 ## Ingresar
 
-Abra la plataforma, elija **Crear una cuenta** o inicie sesión con su correo y contraseña. La documentación del proyecto es pública; los procesos de la plataforma requieren sesión.
+Abra la página y elija **Crear una cuenta**, o entre con su correo y contraseña si ya tiene una. La documentación del proyecto es pública; el resto de la plataforma pide iniciar sesión.
 
-## Procesos
+La primera vez, vaya a **Mi mercado** y elija su departamento. Así los precios que vea serán los de su zona.
 
-**Inicio.** Resume lo necesario para decidir una compra: último índice, variación estimada, costo de importar urea, TRM y la señal "comprar ahora o esperar". Hay señal de alza o de baja solo cuando todo el intervalo de 80 % queda por encima o por debajo del nivel actual; si no, la plataforma dice "sin señal clara".
+## Menú principal
 
-**Qué comprar hoy.** Elija arriba entre alimentos e insumos del campo, y luego el grupo, o escriba el nombre del producto en el buscador. Cada tarjeta muestra el precio de hoy, una barra que va de barato a caro frente a los últimos dos años y la recomendación: buen momento para comprar, precio normal o mejor esperar. El botón "Agregar a mi mercado" lo suma a su lista. Muestra el precio de su departamento, qué tan caro está frente a los últimos dos años, el precio estimado a seis meses con su rango y el motivo. Para fertilizantes incluye el precio por kilo de nutriente, que permite comparar bultos de distinto grado.
+**Inicio.** Cuatro botones grandes llevan a lo que más se usa. Debajo aparecen los alimentos que están a buen precio hoy, la situación de los abonos y plaguicidas, y si tiene avisos sin leer.
 
-**Mi mercado.** Muestra lo que podría costar su lista en tres meses. Guarde su perfil (departamento, cultivo y área) y agregue los productos que compra con su cantidad. Verá el costo de hoy con el precio mediano de su departamento, el costo por hectárea, el departamento donde cada producto está más barato y el costo estimado a tres meses con su rango.
+**Qué comprar hoy.** Arriba elija entre **Alimentos** e **Insumos del campo**, luego el grupo (por ejemplo, frutas o fertilizantes). También puede escribir el nombre del producto en el buscador, como "papa" o "urea". Cada tarjeta muestra:
 
-**Dónde es más barato.** Elija un producto y compare su precio mediano por departamento. Su departamento aparece resaltado. Fíjese en la columna de registros: con pocos registros el dato es menos confiable.
+- el precio de hoy en su departamento (o el del país si no hay dato de su zona);
+- una barra que va de barato a caro, comparando con los últimos dos años;
+- la recomendación: buen momento para comprar, precio normal o mejor esperar;
+- lo que se espera que cueste en 3 meses (alimentos) o en 6 meses (insumos), con un rango;
+- el motivo de la recomendación.
 
-**Mercado.** Muestra los precios internacionales de urea, DAP y cloruro de potasio, la TRM, y el costo de importar un bulto de urea frente a su precio en almacén.
+El botón **Agregar a mi mercado** suma el producto a su lista. Los botones de arriba permiten ver solo los que están a buen momento, a precio normal o mejor esperar. En fertilizantes hay además una tabla con el precio por kilo de nutriente, que sirve para comparar bultos de distinto grado.
 
-**Proyección.** Muestra el índice observado y su estimación a seis meses para el total, fertilizantes y plaguicidas. Lea el rango además del valor central.
+**Mi mercado.** Tiene tres pasos: sus datos (departamento, cultivo y área), agregar productos con su cantidad y ver cuánto cuesta la lista. Muestra el costo de hoy, lo que podría costar en tres meses, el costo por hectárea si escribió el área y el departamento donde cada producto está más barato.
 
-**Presupuesto.** Escriba su gasto actual por grupo y guarde el escenario. El escenario central usa la estimación, y los escenarios bajo y alto usan los extremos del intervalo de 80 %. Otros insumos se mueve con el índice total.
+**Dónde es más barato.** Elija un producto y vea su precio en cada departamento, del más barato al más caro. Su departamento aparece resaltado. Con pocos registros el dato es menos confiable.
 
-**Alertas.** Defina una serie, una dirección, un porcentaje y un plazo. La regla se revisa al crearla y con cada corrida nueva del modelo. Las alertas se ven dentro de la plataforma; no se envían por correo.
+**Cómo ha cambiado el precio.** Muestra la historia del precio de un producto desde 2018 y, a nivel nacional, lo que se espera para los próximos meses. En los insumos aparece también una comparación con el índice de la UPRA.
 
-**Reportes.** Descargue CSV o use **Imprimir o guardar PDF** para proyección, canasta, presupuesto y alertas.
+**Avisos.** Cree una regla, por ejemplo "avísame si los fertilizantes suben más de 5 % en seis meses". La regla se revisa al crearla y cada vez que se actualizan los datos. Los avisos se ven dentro de la página; no llegan por correo.
 
-**Cómo ha cambiado el precio.** Consulte precios medianos por producto y departamento, y compare el subíndice con la variación de precios observados.
+## Más herramientas
 
-**Monitoreo.** Compare lo estimado seis meses antes con lo observado y revise si el error reciente supera al de validación.
+**Índice de insumos.** El índice nacional de la UPRA y su pronóstico a seis meses para el total, fertilizantes y plaguicidas, con rangos de 80 % y 95 %.
+
+**Mercado internacional.** Precios internacionales de urea, DAP y cloruro de potasio, la TRM, y el costo de importar un bulto de urea frente a su precio en almacén.
+
+**Presupuesto.** Escriba lo que gasta en fertilizantes, plaguicidas y otros insumos, y vea tres escenarios a seis meses: bajo, central y alto.
+
+**Reportes.** Descargue en CSV o imprima en PDF la proyección, su mercado, el presupuesto y los avisos.
+
+**Qué tan bien acierta.** Compara lo que el modelo estimó seis meses antes con lo que pasó, y avisa si el error reciente es mayor que el de la validación.
 
 ## Cómo interpretar
 
-- Un índice de 150 significa un nivel 50 % superior a enero de 2021. No significa 150 pesos.
-- El índice es un promedio nacional. Su cultivo, región o proveedor pueden comportarse distinto.
-- En la evaluación final, el modelo no superó a la referencia de mantener el último valor. Use la proyección como señal de apoyo y confirme con cotizaciones antes de decidir.
+- Los precios de alimentos son mayoristas, de plazas y centrales de abastos. En la tienda cuestan más, pero suben y bajan parecido.
+- El índice de insumos no es un precio en pesos: 150 quiere decir 50 % más caro que en enero de 2021.
+- Lo que se espera es una ayuda para decidir. En la evaluación final el modelo del índice no superó a la referencia de mantener el último valor, así que confirme el precio antes de comprar.
+- Los datos se actualizan solos los lunes y jueves.

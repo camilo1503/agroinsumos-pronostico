@@ -44,6 +44,8 @@ jobs:
           git add data/processed data/raw/trm_mensual.csv reports web/data
           git diff --cached --quiet || git commit -m "Actualizacion automatica de datos $(date -u +%Y-%m-%d)"
           git push
+      - name: Marcar version de los archivos
+        run: sed -i -E "s/\?v=[A-Za-z0-9]+/?v=${GITHUB_SHA::7}/g" web/*.html web/js/*.js
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -31,14 +31,16 @@ SARIMA ganó la selección en validación, pero **no superó a persistencia en l
 ## Estructura
 
 ```
-data/raw/            Anexo UPRA y TRM (SIPSA y Pink Sheet se descargan con el pipeline)
-data/processed/      Series limpias y resumen de SIPSA-I
-src/                 Ingesta, preparación, modelos, evaluación, pipeline y carga a Supabase
+data/raw/            Anexo UPRA y TRM (SIPSA, precios mayoristas y Pink Sheet se descargan con el pipeline)
+data/processed/      Series limpias, precios de insumos y alimentos, mercado y pronósticos por producto
+src/                 Ingesta, preparación, modelos del índice, alimentos, pronóstico por producto,
+                     evaluación, pipeline y carga a Supabase
 tests/               Pruebas de datos, métricas y fuga de información
 reports/             Calidad de datos, métricas, backtest, resultados y figuras
 supabase/            Migraciones y configuración de autenticación
 web/                 Documentación pública, inicio de sesión y plataforma
 docs/                Metodología, diccionario, guía de usuario y plan de monitoreo
+.github/workflows/   Pruebas, publicación del sitio y actualización automática (lunes y jueves)
 ```
 
 ## Ejecutar

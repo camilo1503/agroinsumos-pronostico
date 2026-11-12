@@ -1,4 +1,4 @@
-import { db } from "./cliente.js";
+import { db } from "./cliente.js?v=1";
 
 const $ = (id) => document.getElementById(id);
 let registrando = false;

@@ -1,4 +1,4 @@
-import { grafica, fechaUTC, numero, colores, formatoMes } from "./grafica.js";
+import { grafica, fechaUTC, numero, colores, formatoMes } from "./grafica.js?v=1";
 
 const r = await (await fetch("data/resultados.json")).json();
 const c = colores();
