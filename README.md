@@ -2,6 +2,12 @@
 
 Proyecto de la materia Machine Learning. Pronostica a seis meses el índice nacional de precios de insumos agrícolas de la UPRA, lo compara con modelos de referencia y publica el resultado en una plataforma con inicio de sesión, señal de compra, canasta de insumos en pesos, comparador regional, mercado internacional, proyección, presupuesto, alertas, reportes y monitoreo.
 
+## Sitio
+
+Plataforma y documentación: <https://camilo1503.github.io/agroinsumos-pronostico/>
+
+Desarrollado por Daniel Camilo Ruiz, Jean Pierre Gonzales y Daniel Paez.
+
 ## Problema
 
 Los precios de fertilizantes y plaguicidas cambian de forma difícil de anticipar y eso complica presupuestar una producción agrícola. La pregunta del proyecto es qué desempeño alcanzan modelos estadísticos y de aprendizaje automático al pronosticar el índice nacional a seis meses, frente a referencias sencillas.
