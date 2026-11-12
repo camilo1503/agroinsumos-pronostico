@@ -1,6 +1,6 @@
 # Pronóstico de variaciones de precios de agroinsumos colombianos mediante CRISP-ML(Q)
 
-Proyecto de la materia Machine Learning. Pronostica a seis meses el índice nacional de precios de insumos agrícolas de la UPRA, lo compara con modelos de referencia y publica el resultado en una plataforma con inicio de sesión, señal de compra, canasta de insumos en pesos, comparador regional, mercado internacional, proyección, presupuesto, alertas, reportes y monitoreo.
+Proyecto de la materia Machine Learning. Pronostica a seis meses el índice nacional de precios de insumos agrícolas de la UPRA, lo compara con modelos de referencia y publica el resultado en una plataforma con inicio de sesión, pronóstico de precio por producto con recomendación de compra, canasta de insumos en pesos, comparador regional, mercado internacional, proyección, presupuesto, alertas, reportes y monitoreo.
 
 ## Sitio
 
@@ -62,6 +62,10 @@ Para ver el sitio localmente:
 ```bash
 python -m http.server 8000 --directory web
 ```
+
+## Actualización automática
+
+El flujo `Actualizar datos` corre lunes y jueves en GitHub Actions: descarga las fuentes, reentrena, publica en Supabase y vuelve a desplegar el sitio. Requiere los secretos `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY`.
 
 ## Publicar el sitio con ngrok
 

@@ -280,7 +280,7 @@ async function reportes() {
 // ---------- Precios SIPSA ----------
 async function precios() {
   const c = colores();
-  const catalogo = await q(db.from("sipsa_catalogo").select("*").order("grupo").order("producto"));
+  const [catalogo, productos] = await Promise.all([q(db.from("sipsa_catalogo").select("*").order("grupo").order("producto")), leerProductos()]);
   const grupos = [...new Set(catalogo.map((f) => f.grupo))];
   const sGrupo = h("select", {}, grupos.map((g) => h("option", {}, g)));
   const sProd = h("select"), sDep = h("select");
@@ -305,7 +305,17 @@ async function precios() {
       h("div", { class: "cifra" }, h("span", {}, `Último precio mediano, ${formatoMes(u.x)}`), h("strong", {}, pesos(u.y))),
       ...(a ? [h("div", { class: "cifra" }, h("span", {}, "Cambio en doce meses"), h("strong", {}, pct((u.y / a.y - 1) * 100)))] : []),
     );
-    grafica(g1, { series: [{ nombre: "Precio mediano", color: c.pino, puntos: pts }], alto: 280, decimales: 0, descripcion: `Precio mediano de ${clave().producto} en ${sDep.value}` });
+    const pp = sDep.value === "Nacional" ? productos.get(claveProd(clave())) : null;
+    const series = [{ nombre: "Precio mediano", color: c.pino, puntos: pts }], bandas = [];
+    if (pp?.pron.length) {
+      const f = pp.pron.at(-1);
+      cifras.append(
+        h("div", { class: "cifra" }, h("span", {}, `Estimado, ${formatoMes(fechaUTC(f.fecha))}`), h("strong", {}, `${pesos(f.valor)} (${pct(+pp.var_6m_pct)})`)),
+        h("div", { class: "cifra" }, h("span", {}, "Recomendación"), h("strong", {}, RECOMENDACION[pp.recomendacion])));
+      series.push({ nombre: "Pronóstico", color: c.fosfato, punteada: true, puntos: [u, ...pp.pron.map((p) => ({ x: fechaUTC(p.fecha), y: +p.valor }))] });
+      bandas.push({ nombre: "Intervalo de 80 %", color: c.banda, puntos: [{ x: u.x, lo: u.y, hi: u.y }, ...pp.pron.map((p) => ({ x: fechaUTC(p.fecha), lo: +p.li80, hi: +p.ls80 }))] });
+    }
+    grafica(g1, { series, bandas, alto: 280, decimales: 0, descripcion: `Precio mediano de ${clave().producto} en ${sDep.value}` });
   }
   const refrescar = async () => { await llenarDepartamentos(); await dibujar(); };
   sGrupo.addEventListener("change", () => { llenarProductos(); refrescar(); });
@@ -416,7 +426,7 @@ function presionExterna(mercado) {
 }
 
 async function calcularCanasta() {
-  const [b, perfil, items] = await Promise.all([base(), leerPerfil(), q(db.from("canasta_item").select("*").order("creado_en"))]);
+  const [b, perfil, items, productos] = await Promise.all([base(), leerPerfil(), q(db.from("canasta_item").select("*").order("creado_en")), leerProductos()]);
   if (!items.length) return { perfil, filas: [], total: null };
   const precios = await q(db.from("sipsa_precio_reciente").select("*").in("producto", [...new Set(items.map((i) => i.producto))]));
   const filas = items.map((it) => {
@@ -426,10 +436,11 @@ async function calcularCanasta() {
     const usado = local ?? nacional;
     const barato = suyos.filter((p) => p.departamento !== "Nacional").sort((x, y) => x.precio - y.precio)[0];
     const r = resumen(b, SERIE_GRUPO[it.grupo]);
-    const factor = (campo) => r.final[campo] / r.ultimo;
+    const pp = productos.get(claveProd(it)), f6 = pp?.pron.at(-1);
+    const factor = (campo) => (f6 ? f6[campo] / pp.precio : r.final[campo] / r.ultimo);
     const sub = usado ? usado.precio * it.cantidad : null;
     return {
-      it, usado, esLocal: Boolean(local), nacional, barato, sub,
+      it, usado, esLocal: Boolean(local), nacional, barato, sub, pp,
       bajo: sub && sub * factor("li80"), central: sub && sub * factor("valor"), alto: sub && sub * factor("ls80"),
     };
   });
@@ -437,9 +448,99 @@ async function calcularCanasta() {
   return { perfil, filas, total: { hoy: suma("sub"), bajo: suma("bajo"), central: suma("central"), alto: suma("alto") } };
 }
 
+// ---------- Pronóstico por producto y recomendación de compra ----------
+const claveProd = (f) => `${f.grupo}|${f.producto}|${f.presentacion}`;
+const RECOMENDACION = { comprar: "Comprar ahora", esperar: "Conviene esperar", normal: "Precio normal" };
+const ORDEN_REC = { comprar: 0, normal: 1, esperar: 2 };
+
+let cacheProductos = null;
+async function leerProductos() {
+  if (cacheProductos) return cacheProductos;
+  const b = await base();
+  const [resumenes, pron] = await Promise.all([
+    q(db.from("producto_resumen").select("*").eq("corrida_id", b.corrida.id)),
+    q(db.from("producto_pronostico").select("*").eq("corrida_id", b.corrida.id).order("horizonte")),
+  ]);
+  const porClave = new Map(resumenes.map((r) => [claveProd(r), { ...r, pron: [] }]));
+  pron.forEach((p) => porClave.get(claveProd(p))?.pron.push(p));
+  cacheProductos = porClave;
+  return porClave;
+}
+
+function etiqueta(r) {
+  return h("span", { class: `rec ${r.recomendacion}` }, RECOMENDACION[r.recomendacion]);
+}
+
+async function comprar() {
+  const [productos, perfil] = await Promise.all([leerProductos(), leerPerfil()]);
+  const todos = [...productos.values()];
+  if (!todos.length) { pagina(h("h1", {}, "Qué comprar hoy"), h("p", {}, "Todavía no hay pronósticos por producto publicados.")); return; }
+  const grupos = [...new Set(todos.map((r) => r.grupo))].sort();
+  const sGrupo = h("select", {}, grupos.map((g) => h("option", { selected: g === "Fertilizantes" }, g)));
+  const salida = h("div");
+  const enDep = perfil.departamento !== "Nacional";
+
+  async function dibujar() {
+    const lista = todos.filter((r) => r.grupo === sGrupo.value)
+      .sort((x, y) => ORDEN_REC[x.recomendacion] - ORDEN_REC[y.recomendacion] || x.posicion_24m - y.posicion_24m);
+    const locales = enDep
+      ? await q(db.from("sipsa_precio_reciente").select("producto,presentacion,precio").match({ grupo: sGrupo.value, departamento: perfil.departamento }))
+      : [];
+    const local = (r) => locales.find((l) => l.producto === r.producto && l.presentacion === r.presentacion);
+    const cuenta = (c) => lista.filter((r) => r.recomendacion === c).length;
+    const nutri = lista.filter((r) => r.precio_kg_nutriente != null).sort((x, y) => x.precio_kg_nutriente - y.precio_kg_nutriente);
+    const maxNutri = Math.max(...nutri.map((r) => +r.precio_kg_nutriente), 1);
+
+    salida.replaceChildren(
+      h("div", { class: "cifras" },
+        h("div", { class: "cifra" }, h("span", {}, "Para comprar ahora"), h("strong", {}, String(cuenta("comprar")))),
+        h("div", { class: "cifra" }, h("span", {}, "Precio normal"), h("strong", {}, String(cuenta("normal")))),
+        h("div", { class: "cifra" }, h("span", {}, "Conviene esperar"), h("strong", {}, String(cuenta("esperar")))),
+        h("div", { class: "cifra" }, h("span", {}, "Precios hasta"), h("strong", {}, formatoMes(fechaUTC(lista[0].fecha_precio))))),
+      h("div", { class: "panel" }, h("h2", {}, `Recomendación por producto: ${sGrupo.value.toLowerCase()}`),
+        h("div", { class: "tabla-scroll" }, h("table", {},
+          h("thead", {}, h("tr", {}, ["Producto", "Recomendación", enDep ? `Precio en ${perfil.departamento}` : "Precio nacional", "Frente a 2 años", "Estimado en 6 meses", "Rango de 80 %", "Por qué"].map((t) => h("th", {}, t)))),
+          h("tbody", {}, lista.map((r) => {
+            const l = local(r), f = r.pron.at(-1);
+            return h("tr", {},
+              h("td", {}, `${r.producto} (${r.presentacion})`),
+              h("td", {}, etiqueta(r)),
+              h("td", {}, l ? pesos(l.precio) : `${pesos(r.precio)}${enDep ? " (nacional)" : ""}`),
+              h("td", { class: "celda-barra", title: `Mínimo ${pesos(r.minimo_24m)}, máximo ${pesos(r.maximo_24m)}` },
+                h("span", { class: "posicion" }, h("i", { style: `left:${Math.round(r.posicion_24m * 100)}%` })),
+                h("span", { class: "pequeno" }, r.posicion_24m <= 0.33 ? "Barato" : r.posicion_24m >= 0.67 ? "Caro" : "Medio")),
+              h("td", {}, `${pesos(f.valor)} (${pct(+r.var_6m_pct)})`),
+              h("td", {}, `${pesos(f.li80)} a ${pesos(f.ls80)}`),
+              h("td", { class: "motivo" }, r.motivo));
+          }))))),
+      ...(nutri.length ? [h("div", { class: "panel" }, h("h2", {}, "Fertilizantes: cuánto cuesta cada kilo de nutriente"),
+        h("p", {}, "Un bulto más barato no siempre rinde más. Aquí se divide el precio entre los kilos de nitrógeno, fósforo y potasio que trae cada bulto."),
+        h("div", { class: "tabla-scroll" }, h("table", {},
+          h("thead", {}, h("tr", {}, ["Fertilizante", "Precio del bulto", "Kilos de nutriente", "Precio por kilo de nutriente", "", "Recomendación"].map((t) => h("th", {}, t)))),
+          h("tbody", {}, nutri.map((r, i) => h("tr", { class: i === 0 ? "elegido" : "" },
+            h("td", {}, `${r.producto} (${r.presentacion})`), h("td", {}, pesos(r.precio)), h("td", {}, numero(r.kg_nutriente, 1)),
+            h("td", {}, pesos(r.precio_kg_nutriente)),
+            h("td", { class: "celda-barra" }, h("span", { class: "medidor", style: `width:${Math.round(r.precio_kg_nutriente / maxNutri * 100)}%` })),
+            h("td", {}, etiqueta(r))))))),
+        h("p", { class: "pequeno" }, "Suma de N, P₂O₅ y K₂O según el grado del producto, con el precio mediano nacional. Cada cultivo necesita una proporción distinta de nutrientes: use esta tabla para comparar productos parecidos y consulte su análisis de suelo."))] : []),
+    );
+  }
+  sGrupo.addEventListener("change", dibujar);
+  pagina(
+    h("h1", {}, "Qué comprar hoy"),
+    h("p", {}, "Cada producto tiene su propio pronóstico de precio a seis meses. La recomendación combina dos cosas: qué tan caro está hoy frente a los últimos dos años y hacia dónde apunta el rango estimado."),
+    h("div", { class: "filtros" }, h("label", {}, "Grupo", sGrupo)),
+    salida,
+    h("p", { class: "pequeno" }, "Pronóstico del precio mediano nacional de SIPSA-I. Para cada producto se comparan dos modelos en 18 meses de validación y se publica el de menor error; si ninguno mejora a mantener el último precio, la estimación central es el precio de hoy. Es una ayuda para decidir, no una garantía: confirme con cotizaciones."),
+  );
+  await dibujar();
+}
+
 // ---------- Inicio ----------
 async function inicio() {
-  const [b, mercado, canasta] = await Promise.all([base(), leerMercado(), calcularCanasta()]);
+  const [b, mercado, canasta, productos] = await Promise.all([base(), leerMercado(), calcularCanasta(), leerProductos()]);
+  const sugeridos = [...productos.values()].filter((r) => r.recomendacion === "comprar")
+    .sort((x, y) => (x.grupo === "Fertilizantes" ? 0 : 1) - (y.grupo === "Fertilizantes" ? 0 : 1) || x.posicion_24m - y.posicion_24m).slice(0, 5);
   const { count: sinLeer } = await db.from("alerta_evento").select("id", { count: "exact", head: true }).eq("leida", false);
   const total = resumen(b, "total");
   const presion = presionExterna(mercado);
@@ -462,6 +563,12 @@ async function inicio() {
     h("div", { class: "senales" }, tarjeta("Fertilizantes", "fertilizantes"), tarjeta("Plaguicidas", "plaguicidas")),
     ...(presion ? [h("p", {}, `Mercado internacional: ${presion.lectura}. El costo de traer urea al país cambió ${pct(presion.cambio)} en tres meses; ese movimiento suele llegar al almacén con algunos meses de retraso. `, h("a", { href: "#mercado" }, "Ver mercado"))] : []),
     h("p", { class: "pequeno" }, "La señal sale del intervalo de 80 % del pronóstico. En la prueba final el modelo no superó a la referencia de mantener el último valor: úsela como apoyo y confirme con cotizaciones."),
+    h("div", { class: "panel" }, h("h2", {}, "Qué comprar hoy"),
+      sugeridos.length
+        ? h("ul", { class: "lista-simple" }, sugeridos.map((r) => h("li", {},
+            h("span", {}, h("strong", {}, `${r.producto} (${r.presentacion})`), ` · ${pesos(r.precio)} · ${r.motivo}`), etiqueta(r))))
+        : h("p", {}, "Hoy ningún producto tiene señal de compra."),
+      h("p", {}, h("a", { href: "#comprar" }, "Ver la recomendación de todos los productos"))),
     h("div", { class: "panel" }, h("h2", {}, "Mi canasta de insumos"),
       canasta.total
         ? h("div", {}, h("div", { class: "cifras" },
@@ -534,6 +641,7 @@ async function canasta() {
     h("td", {}, numero(f.it.cantidad, 1)),
     h("td", {}, f.usado ? `${pesos(f.usado.precio)}${f.esLocal ? "" : " (nacional)"}` : "Sin precio reciente"),
     h("td", {}, f.sub ? pesos(f.sub) : "—"),
+    h("td", {}, f.pp ? etiqueta(f.pp) : "—"),
     h("td", {}, f.barato && f.usado ? `${f.barato.departamento}: ${pesos(f.barato.precio)} (${pct((f.barato.precio / f.usado.precio - 1) * 100)})` : "—"),
     h("td", {}, f.sub ? `${pesos(f.central)} (${pesos(f.bajo)} a ${pesos(f.alto)})` : "—"),
     h("td", {}, h("button", { class: "secundario", onclick: async () => { await db.from("canasta_item").delete().eq("id", f.it.id); canasta(); } }, "Quitar"))));
@@ -552,10 +660,10 @@ async function canasta() {
               ...(perfil.area_ha > 0 ? [h("div", { class: "cifra" }, h("span", {}, "Costo hoy por hectárea"), h("strong", {}, pesos(total.hoy / perfil.area_ha)))] : []),
               ...(ahorro > 0 ? [h("div", { class: "cifra" }, h("span", {}, "Diferencia frente al departamento más barato"), h("strong", {}, pesos(ahorro)))] : [])),
             h("div", { class: "tabla-scroll" }, h("table", {},
-              h("thead", {}, h("tr", {}, ["Producto", "Cantidad", "Precio unitario", "Subtotal hoy", "Departamento más barato", "Estimado en 6 meses (rango)", ""].map((t) => h("th", {}, t)))),
+              h("thead", {}, h("tr", {}, ["Producto", "Cantidad", "Precio unitario", "Subtotal hoy", "Recomendación", "Departamento más barato", "Estimado en 6 meses (rango)", ""].map((t) => h("th", {}, t)))),
               h("tbody", {}, cuerpo))))
         : h("p", {}, "Aún no hay productos. Agregue el primero con el formulario de arriba.")),
-    h("p", { class: "pequeno" }, "Precio unitario: mediana de los precios reportados al DANE en los últimos tres meses; si su departamento no tiene dato se usa el nacional. La estimación a seis meses aplica la variación del subíndice de fertilizantes o de plaguicidas, no un pronóstico por producto. El departamento más barato no incluye transporte."),
+    h("p", { class: "pequeno" }, "Precio unitario: mediana de los precios reportados al DANE en los últimos tres meses; si su departamento no tiene dato se usa el nacional. La estimación a seis meses usa el pronóstico de precio de cada producto; si un producto no lo tiene, se aplica la variación del subíndice de su grupo. El departamento más barato no incluye transporte."),
   );
 }
 
@@ -647,8 +755,8 @@ async function mercado() {
 }
 
 // ---------- Navegacion ----------
-const RUTAS = { inicio, proyeccion, canasta, regional, mercado, presupuesto, alertas, reportes, precios, monitoreo };
-const NOMBRES = { inicio: "Inicio", proyeccion: "Proyección", canasta: "Mi canasta", regional: "Comparador regional", mercado: "Mercado", presupuesto: "Presupuesto", alertas: "Alertas", reportes: "Reportes", precios: "Precios SIPSA", monitoreo: "Monitoreo" };
+const RUTAS = { inicio, comprar, proyeccion, canasta, regional, mercado, presupuesto, alertas, reportes, precios, monitoreo };
+const NOMBRES = { inicio: "Inicio", comprar: "Qué comprar hoy", proyeccion: "Proyección", canasta: "Mi canasta", regional: "Comparador regional", mercado: "Mercado", presupuesto: "Presupuesto", alertas: "Alertas", reportes: "Reportes", precios: "Precios SIPSA", monitoreo: "Monitoreo" };
 async function navegar() {
   const ruta = RUTAS[location.hash.slice(1)] ? location.hash.slice(1) : "inicio";
   document.querySelectorAll(".riel nav a").forEach((a) => {

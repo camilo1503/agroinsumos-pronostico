@@ -18,7 +18,7 @@ import statsmodels
 
 from . import config as c
 from . import evaluate as ev
-from . import ingest, prepare
+from . import ingest, prepare, productos
 from .models import MODELOS, NOMBRES
 
 
@@ -79,6 +79,9 @@ def correr(actualizar=False, preparar=True):
     if actualizar:
         ingest.descargar_todo(forzar=True)
     calidad = prepare.correr() if preparar else json.loads((c.REPORTES / "calidad_datos.json").read_text(encoding="utf-8"))
+    if preparar:
+        calidad["productos"] = productos.correr()
+        (c.REPORTES / "calidad_datos.json").write_text(json.dumps(calidad, indent=2, ensure_ascii=False), encoding="utf-8")
     ind, exo = _cargar_series()
     y = ind[c.SERIES["total"]]
 

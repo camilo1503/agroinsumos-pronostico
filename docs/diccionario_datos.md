@@ -38,6 +38,18 @@
 | `precio` | Mediana de los precios promedio publicados, en COP |
 | `n_registros` | Registros de SIPSA-I usados en la mediana |
 
+### `data/processed/producto_pronostico.csv` y `producto_resumen.csv`
+
+| Campo | Descripción |
+|---|---|
+| `horizonte`, `fecha`, `valor`, `li80`, `ls80` | Precio estimado y su intervalo de 80 % para cada uno de los seis meses, en COP |
+| `precio`, `fecha_precio` | Último precio mediano nacional |
+| `minimo_24m`, `maximo_24m`, `posicion_24m` | Rango de 24 meses y posición del precio actual (0 = mínimo, 1 = máximo) |
+| `var_12m_pct`, `var_6m_pct` | Variación observada en doce meses y estimada a seis meses |
+| `modelo`, `mae_modelo`, `mae_persistencia` | Modelo publicado (`naive` o `ets`) y errores en validación |
+| `recomendacion`, `motivo` | `comprar`, `esperar` o `normal`, y la razón |
+| `kg_nutriente`, `precio_kg_nutriente` | Kilos de N + P₂O₅ + K₂O por unidad y precio por kilo de nutriente |
+
 ### `data/processed/sipsa_contraste.csv`
 
 Índice encadenado por grupo, construido con la mediana de las variaciones mensuales de series comparables. Sirve para contrastar tendencias y no es un índice oficial.
@@ -52,6 +64,7 @@
 | `pronostico` | Estimación e intervalos de 80 % y 95 % por serie | Lectura con sesión |
 | `backtest_modelo` | Predicciones históricas por origen y horizonte | Lectura con sesión |
 | `sipsa_precio`, `sipsa_contraste` | Precios resumidos y contraste | Lectura con sesión |
+| `producto_pronostico`, `producto_resumen` | Pronóstico por producto y recomendación de compra | Lectura con sesión |
 | `mercado_mensual` | TRM y precios internacionales de fertilizantes | Lectura con sesión |
 | `sipsa_precio_reciente` | Último precio por producto y departamento en los tres meses más recientes | Lectura con sesión |
 | `departamento_lista` | Departamentos con precios | Lectura con sesión |

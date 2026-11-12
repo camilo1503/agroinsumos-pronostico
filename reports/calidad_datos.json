@@ -54,5 +54,14 @@
     "trm": "2026-11",
     "urea_usd": "2026-10",
     "dap_usd": "2026-10"
+  },
+  "productos": {
+    "productos": 54,
+    "con_ets": 18,
+    "recomendaciones": {
+      "normal": 36,
+      "comprar": 14,
+      "esperar": 4
+    }
   }
 }

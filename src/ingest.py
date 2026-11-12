@@ -29,6 +29,28 @@ def descargar_todo(forzar=False):
         trm.rename(columns={"mes": "fecha"}).to_csv(c.TRM_CSV, index=False)
 
 
+API_A_ANEXO = {
+    "indice_total": "T_Índice", "total_fertilizantes": "T_Fertilizantes", "total_plaguicidas": "T_Plaguicidas",
+    "total_otros": "T_Otros", "total_simples": "T_Simples", "total_compuestos": "T_Compuestos",
+    "total_herbicidas": "T_Herbicidas", "total_fungicidas": "T_Fungicidas", "total_insecticidas": "T_Insecticidas",
+}
+
+
+def extender_con_api(indice):
+    """Agrega los meses que Datos Abiertos ya publico y el anexo local aun no tiene."""
+    try:
+        r = requests.get(c.URL_UPRA_API, headers=UA, timeout=120)
+        r.raise_for_status()
+        api = pd.read_csv(io.StringIO(r.text), parse_dates=["fecha"]).set_index("fecha").sort_index()
+    except (requests.RequestException, ValueError, KeyError):
+        return indice
+    nuevos = api.loc[api.index > indice.index.max(), list(API_A_ANEXO)].rename(columns=API_A_ANEXO)
+    nuevos = nuevos.apply(pd.to_numeric, errors="coerce").replace(0, float("nan")).dropna(subset=["T_Índice"])
+    if nuevos.empty:
+        return indice
+    return pd.concat([indice, nuevos]).asfreq("MS")
+
+
 def comparar_con_api(indice):
     """Devuelve la mayor diferencia absoluta entre el anexo y la API oficial."""
     r = requests.get(c.URL_UPRA_API, headers=UA, timeout=120)

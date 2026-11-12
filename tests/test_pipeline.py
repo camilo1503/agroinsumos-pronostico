@@ -90,3 +90,31 @@ def test_mercado_tiene_series_positivas_y_fechas_unicas():
     assert (m.dropna() > 0).all().all()
     assert m["urea_usd"].notna().sum() > 60
 
+
+def test_pronostico_por_producto_no_usa_el_futuro_y_elige_el_menor_error():
+    from src import productos as p
+    idx = pd.date_range("2019-01-01", periods=84, freq="MS")
+    rng = np.random.default_rng(3)
+    y = pd.Series(50000 * np.exp(np.cumsum(rng.normal(0.004, 0.03, 84))), index=idx)
+    elegido, mae, cuantil = p.evaluar(y)
+    assert mae[elegido] == min(mae.values())
+    assert len(cuantil) == c.HORIZONTE and (cuantil >= 0).all()
+    alterada = y.copy()
+    alterada.iloc[-1] *= 3   # el ultimo mes solo puede afectar al ultimo origen
+    _, mae2, _ = p.evaluar(alterada.iloc[:-1])
+    _, mae3, _ = p.evaluar(y.iloc[:-1])
+    assert mae2 == mae3
+
+
+def test_recomendacion_y_nutrientes():
+    from src import productos as p
+    assert p.recomendar(0.5, -10, 80, 95, 100)[0] == "esperar"
+    assert p.recomendar(0.5, 10, 105, 120, 100)[0] == "comprar"
+    assert p.recomendar(0.1, 0, 90, 110, 100)[0] == "comprar"
+    assert p.recomendar(0.9, -5, 85, 105, 100)[0] == "esperar"
+    assert p.recomendar(0.5, 0, 90, 110, 100)[0] == "normal"
+    assert p.nutrientes("Urea 46%", "50 kilogramos") == pytest.approx(23)
+    assert p.nutrientes("Fosfato Diamónico (DAP) 18-46-0", "50 kilogramos") == pytest.approx(32)
+    assert p.nutrientes("Cal Dolomita", "50 kilogramos") is None
+    assert p.nutrientes("Nutrimins", "1 litro") is None
+

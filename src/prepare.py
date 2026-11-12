@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from . import config as c
-from .ingest import comparar_con_api
+from .ingest import comparar_con_api, extender_con_api
 
 MESES = {m: i + 1 for i, m in enumerate(
     ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto",
@@ -128,7 +128,7 @@ def preparar_mercado():
 def correr():
     c.PROCESSED.mkdir(parents=True, exist_ok=True)
     c.REPORTES.mkdir(parents=True, exist_ok=True)
-    d = cargar_indice()
+    d = extender_con_api(cargar_indice())
     exo = cargar_exogenas(d)
     calidad = reporte_calidad(d)
     calidad["comparacion_datos_abiertos"] = comparar_con_api(d)

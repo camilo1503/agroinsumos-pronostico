@@ -1,0 +1,52 @@
+name: Actualizar datos
+
+# Descarga las fuentes oficiales, reentrena, publica en la base de datos y en el sitio.
+on:
+  schedule:
+    - cron: "0 11 * * 1,4"   # lunes y jueves, 6:00 a. m. hora de Colombia
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Descargar fuentes y reentrenar
+        run: python -m src.pipeline --actualizar-fuentes
+      - run: python -m pytest -q
+      - name: Publicar en la base de datos
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python -m src.load_supabase
+      - name: Guardar datos y resultados en el repositorio
+        run: |
+          git config user.name "camilo1503"
+          git config user.email "camilorr.0153@gmail.com"
+          git add data/processed data/raw/trm_mensual.csv reports web/data
+          git diff --cached --quiet || git commit -m "Actualizacion automatica de datos $(date -u +%Y-%m-%d)"
+          git push
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - id: despliegue
+        uses: actions/deploy-pages@v4

@@ -40,6 +40,10 @@ class Cliente:
                 salida += r.json()
         return salida
 
+    def borrar(self, tabla, filtro):
+        r = self.s.delete(f"{self.base}/{tabla}", params=filtro)
+        r.raise_for_status()
+
     def rpc(self, funcion, cuerpo):
         r = self.s.post(f"{self.base}/rpc/{funcion}", data=json.dumps(cuerpo))
         r.raise_for_status()
@@ -80,6 +84,14 @@ def cargar(incluir_sipsa=True):
     bt = pd.read_csv(c.REPORTES / "backtest.csv").drop(columns=["escala"])
     bt.insert(0, "corrida_id", cid)
     cli.upsert("backtest_modelo", _registros(bt), "corrida_id,modelo,origen,horizonte")
+
+    # Los productos se reemplazan completos: uno que pierde cobertura no debe quedar con datos viejos.
+    for tabla, archivo, llave in (("producto_resumen", "producto_resumen.csv", "corrida_id,grupo,producto,presentacion"),
+                                  ("producto_pronostico", "producto_pronostico.csv", "corrida_id,grupo,producto,presentacion,horizonte")):
+        df = pd.read_csv(c.PROCESSED / archivo)
+        df.insert(0, "corrida_id", cid)
+        cli.borrar(tabla, {"corrida_id": f"eq.{cid}"})
+        cli.upsert(tabla, _registros(df), llave)
 
     mer = pd.read_csv(c.PROCESSED / "mercado_mensual.csv")
     cli.upsert("mercado_mensual", _registros(mer), "fecha")

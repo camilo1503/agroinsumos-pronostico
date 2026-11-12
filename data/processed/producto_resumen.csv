@@ -1,0 +1,55 @@
+grupo,producto,presentacion,fecha_precio,precio,minimo_24m,maximo_24m,posicion_24m,var_12m_pct,var_6m_pct,modelo,mae_modelo,mae_persistencia,recomendacion,motivo,kg_nutriente,precio_kg_nutriente
+Fertilizantes,10-20-20,50 kilogramos,2026-09-01,167984.09,166833.33,196612.5,0.039,-7.67,0.0,naive,5378.05,5378.05,comprar,Está cerca de su precio más bajo en dos años y no se estima una baja.,25.0,6719.36
+Fertilizantes,10-30-10,50 kilogramos,2026-09-01,212019.64,171500.0,222051.19,0.802,6.69,0.0,naive,7105.86,7105.86,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",25.0,8480.79
+Fertilizantes,15-15-15,50 kilogramos,2026-09-01,169000.0,142466.67,177743.0,0.752,13.64,-5.94,ets,7030.55,8180.18,esperar,Está cerca de su precio más alto en dos años y la estimación central es a la baja.,22.5,7511.11
+Fertilizantes,17-6-18-2(Mg),50 kilogramos,2026-09-01,174222.22,137381.82,188083.33,0.727,16.2,-13.53,ets,6382.81,8025.57,esperar,Está cerca de su precio más alto en dos años y la estimación central es a la baja.,20.5,8498.64
+Fertilizantes,Agrimins 8-5-0-6,46 kilogramos,2026-09-01,142773.35,122629.17,143480.0,0.966,8.99,-0.98,ets,2749.97,3433.04,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",5.98,23875.14
+Fertilizantes,Cal Dolomita,50 kilogramos,2026-09-01,19500.0,16750.0,19500.0,1.0,12.88,0.0,naive,337.39,337.39,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fertilizantes,Cloruro de Potasio 0-0-60,50 kilogramos,2026-09-01,123916.67,102565.0,131633.33,0.735,10.3,-5.56,ets,3870.98,4437.76,esperar,Está cerca de su precio más alto en dos años y la estimación central es a la baja.,30.0,4130.56
+Fertilizantes,Crecer 500,900 gramos,2026-09-01,13550.24,12697.5,13569.23,0.978,4.05,0.0,naive,158.99,158.99,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fertilizantes,Fosfato Diamónico (DAP) 18-46-0,50 kilogramos,2026-09-01,234100.0,172650.0,239675.0,0.917,12.89,-3.6,ets,6274.87,10646.56,esperar,Está cerca de su precio más alto en dos años y la estimación central es a la baja.,32.0,7315.62
+Fertilizantes,Nutrifoliar Completo,1 litro,2026-09-01,32000.0,27350.0,32000.0,1.0,6.62,1.35,ets,529.92,658.73,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fertilizantes,Nutrimins,1 litro,2026-09-01,20275.0,18500.0,20326.32,0.972,3.29,2.65,ets,191.85,350.45,comprar,Todo el rango estimado a seis meses queda por encima del precio de hoy.,,
+Fertilizantes,Sulfato de Amonio (SAM) 21-0-0-24(S),50 kilogramos,2026-09-01,89016.67,72645.0,98350.0,0.637,10.88,0.0,naive,4988.51,4988.51,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",10.5,8477.78
+Fertilizantes,Todo en Uno,1 kilogramo,2026-09-01,11211.81,10703.33,11211.81,1.0,3.01,0.0,naive,119.73,119.73,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fertilizantes,Urea 46%,50 kilogramos,2026-09-01,165666.67,112150.0,195500.0,0.642,20.84,-15.08,ets,11060.59,12843.86,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",23.0,7202.9
+Fertilizantes,Wuxal Tapa Negra,1 litro,2026-09-01,61850.0,61350.0,66850.0,0.091,-5.94,0.0,naive,1113.71,1113.71,comprar,Está cerca de su precio más bajo en dos años y no se estima una baja.,,
+Fungicidas,Antracol 70 Wp,400 gramos,2026-09-01,27860.0,26490.23,28174.91,0.813,3.59,1.55,ets,214.32,257.26,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fungicidas,Benomyl 50 Wp,100 gramos,2026-09-01,8866.67,8500.0,9166.67,0.55,-1.21,0.0,naive,189.65,189.65,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fungicidas,Carbendazim 500 Sc,1 litro,2026-09-01,29054.17,28956.67,31250.0,0.043,-0.77,0.0,naive,359.61,359.61,comprar,Está cerca de su precio más bajo en dos años y no se estima una baja.,,
+Fungicidas,Daconil 720 Sc,1 litro,2026-09-01,42344.44,40968.85,42837.5,0.736,0.54,0.0,naive,382.09,382.09,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fungicidas,Difenoconazol 250 Ec,1 litro,2026-09-01,69250.0,68000.0,85662.5,0.071,-15.03,0.0,naive,4065.7,4065.7,comprar,Está cerca de su precio más bajo en dos años y no se estima una baja.,,
+Fungicidas,Dithane M-45 Wp NT,1 kilogramo,2026-09-01,24133.33,22166.67,25833.33,0.536,1.61,0.0,naive,589.83,589.83,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fungicidas,Elosal 720 Sc,1 litro,2026-09-01,30600.0,27513.33,30600.0,1.0,7.41,3.57,ets,361.66,491.54,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fungicidas,Fitoraz 76 Wp,500 gramos,2026-09-01,29958.33,28306.63,30163.64,0.889,3.81,1.07,ets,258.98,343.88,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fungicidas,Mancozeb 80 Wp,1 kilogramo,2026-09-01,22016.67,21336.36,22490.0,0.59,3.19,0.0,naive,316.37,316.37,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fungicidas,Manzate 200 Wp,1 kilogramo,2026-09-01,23940.62,22900.0,23993.33,0.952,4.47,0.0,naive,321.27,321.27,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fungicidas,Mertect 500 Sc,100 centímetros cúbicos,2026-09-01,45415.62,40750.0,45415.62,1.0,2.42,0.0,naive,784.54,784.54,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fungicidas,"Oxicloruro de Cobre 58,8% Wp",1 kilogramo,2026-09-01,15518.85,13599.52,15518.85,1.0,8.93,0.0,naive,324.92,324.92,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fungicidas,Ridomil Gold MZ 68 Wp,375 gramos,2026-09-01,33124.62,30672.0,33124.62,1.0,4.2,2.72,ets,274.04,392.28,comprar,Todo el rango estimado a seis meses queda por encima del precio de hoy.,,
+Fungicidas,Score 250 Ec,100 centímetros cúbicos,2026-09-01,27571.43,26574.4,28275.0,0.586,-0.79,-0.5,ets,342.62,360.19,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fungicidas,Trivia Wp,400 gramos,2026-09-01,32647.46,30114.15,32647.46,1.0,6.2,2.85,ets,293.86,406.19,comprar,Todo el rango estimado a seis meses queda por encima del precio de hoy.,,
+Herbicidas,Atrazina 80% Wp,1 kilogramo,2026-09-01,32988.5,32609.09,35666.67,0.124,-1.77,0.0,naive,479.78,479.78,comprar,Está cerca de su precio más bajo en dos años y no se estima una baja.,,
+Herbicidas,Glifosato 480 Sl,1 litro,2026-09-01,18500.0,17542.86,18800.0,0.761,3.47,0.0,naive,241.34,241.34,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Herbicidas,Glifosato 480 Sl,4 litros,2026-09-01,67755.0,62812.5,68225.0,0.913,6.7,0.0,naive,1143.81,1143.81,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Herbicidas,Glifosol Sl,1 litro,2026-09-01,19962.96,17930.77,19962.96,1.0,10.71,0.0,naive,334.04,334.04,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Herbicidas,Glifosol Sl,4 litros,2026-09-01,70177.78,64466.67,70942.24,0.882,7.97,0.0,naive,1248.71,1248.71,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Herbicidas,Gramafin Sl,1 litro,2026-09-01,21170.31,17411.67,21170.31,1.0,17.93,0.0,naive,716.73,716.73,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Herbicidas,Gramafin Sl,4 litros,2026-09-01,77093.5,63166.67,77566.67,0.967,20.86,0.0,naive,2698.38,2698.38,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Herbicidas,Gramoxone Sl,1 litro,2026-09-01,20208.33,19980.0,40350.0,0.011,-19.57,0.0,naive,3560.53,3560.53,comprar,Está cerca de su precio más bajo en dos años y no se estima una baja.,,
+Herbicidas,Panzer 480 Sl,1 litro,2026-09-01,20607.69,20010.0,20891.67,0.678,2.35,0.0,naive,245.47,245.47,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Herbicidas,Panzer 480 Sl,4 litros,2026-09-01,77578.05,72265.88,78894.12,0.801,5.97,0.0,naive,1280.82,1280.82,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Herbicidas,Roundup Activo,1 litro,2026-09-01,22675.05,22500.0,24445.59,0.09,0.42,1.25,ets,226.11,289.79,comprar,Está cerca de su precio más bajo en dos años y no se estima una baja.,,
+Herbicidas,Roundup Activo,4 litros,2026-09-01,85365.4,83238.46,88336.69,0.417,0.43,0.0,naive,1049.05,1049.05,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Herbicidas,Tordon XT,1 litro,2026-09-01,39804.66,39500.0,40737.81,0.246,-1.97,0.0,naive,346.91,346.91,comprar,Está cerca de su precio más bajo en dos años y no se estima una baja.,,
+Herbicidas,Tordon XT,4 litros,2026-09-01,144122.38,144122.38,150903.0,0.0,-3.14,0.0,naive,1273.84,1273.84,comprar,Está cerca de su precio más bajo en dos años y no se estima una baja.,,
+Herbicidas,Tronador D,1 litro,2026-09-01,24421.43,24111.11,25273.6,0.267,-0.46,0.0,naive,361.4,361.4,comprar,Está cerca de su precio más bajo en dos años y no se estima una baja.,,
+Insecticidas,Engeo,1 litro,2026-09-01,200509.12,193785.71,208333.33,0.462,-3.76,0.0,naive,3410.03,3410.03,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Insecticidas,Engeo,100 centímetros cúbicos,2026-09-01,26766.67,24230.0,27015.0,0.911,1.71,1.76,ets,419.75,485.91,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Insecticidas,Engeo,250 centímetros cúbicos,2026-09-01,58264.0,56100.0,58464.0,0.915,1.06,0.0,naive,432.94,432.94,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Insecticidas,Exalt 60 Sc,100 centímetros cúbicos,2026-09-01,48904.5,46406.39,48904.5,1.0,3.64,0.0,naive,567.45,567.45,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Insecticidas,Invetrina 200 Ec,1 litro,2026-09-01,29765.95,29225.0,30820.19,0.339,-0.42,0.0,naive,309.91,309.91,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Insecticidas,Karate Zeon,100 centímetros cúbicos,2026-09-01,18880.06,16800.0,18880.06,1.0,3.89,2.18,ets,192.76,360.76,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Insecticidas,Lannate Sl,1 litro,2026-09-01,52667.44,48167.86,52737.68,0.985,3.57,1.8,ets,812.85,846.61,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Insecticidas,Malathion 57 Ec,1 litro,2026-09-01,41900.0,41079.4,42750.0,0.491,0.68,0.0,naive,390.27,390.27,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Insecticidas,Numetrin 200 Ec,1 litro,2026-09-01,27666.67,27500.0,30000.0,0.067,0.24,0.0,naive,493.14,493.14,comprar,Está cerca de su precio más bajo en dos años y no se estima una baja.,,
