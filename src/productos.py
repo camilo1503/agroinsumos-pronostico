@@ -1,7 +1,7 @@
-"""Pronostico a seis meses del precio nacional de cada producto SIPSA-I y recomendacion de compra.
+"""Pronostico del precio nacional de cada producto (insumos y alimentos) y recomendacion de compra.
 
-Para cada producto se comparan persistencia y suavizamiento exponencial (ETS) en una validacion
-temporal progresiva. ETS solo se usa si su error es menor; si no, se publica persistencia.
+Se comparan persistencia y ETS en validacion temporal; ETS solo se usa si su error es menor.
+El plazo de la recomendacion es 3 meses para alimentos y 6 para insumos.
 """
 import re
 
@@ -17,6 +17,12 @@ MIN_MESES = 48         # historia minima para pronosticar
 MAX_REZAGO = 2         # meses de atraso permitidos frente al ultimo mes de SIPSA-I
 CLAVE = ["grupo", "producto", "presentacion"]
 CANDIDATOS = {"naive": naive, "ets": ets}
+INSUMOS = {"Fertilizantes", "Fungicidas", "Herbicidas", "Insecticidas"}
+
+
+def plazo(grupo):
+    # Los alimentos frescos cambian de precio mucho mas rapido; a 6 meses el rango sale demasiado ancho.
+    return c.HORIZONTE if grupo in INSUMOS else 3
 
 
 def series_nacionales(precios):
@@ -36,8 +42,9 @@ def series_nacionales(precios):
     return salida
 
 
-def evaluar(y, h=c.HORIZONTE, origenes=ORIGENES):
-    """Devuelve el modelo elegido, el MAE de cada candidato y el cuantil 80 % del error por horizonte."""
+def evaluar(y, h=c.HORIZONTE, origenes=ORIGENES, meses=None):
+    """Modelo elegido (por MAE hasta `meses`), MAE de cada candidato y cuantil 80 % del error por horizonte."""
+    meses = meses or h
     n = len(y)
     errores = {m: [] for m in CANDIDATOS}
     for i in range(n - h - origenes, n - h):
@@ -45,7 +52,7 @@ def evaluar(y, h=c.HORIZONTE, origenes=ORIGENES):
         real = y.iloc[i + 1: i + 1 + h].to_numpy()
         for m, f in CANDIDATOS.items():
             errores[m].append((real, np.asarray(f(entrenamiento, h))))
-    mae = {m: float(np.mean([np.abs(r - p).mean() for r, p in v])) for m, v in errores.items()}
+    mae = {m: float(np.mean([np.abs(r[:meses] - p[:meses]).mean() for r, p in v])) for m, v in errores.items()}
     elegido = "ets" if mae["ets"] < mae["naive"] else "naive"
     log_err = np.abs(np.array([np.log(r) - np.log(p) for r, p in errores[elegido]]))   # origenes x horizonte
     k = min(int(np.ceil((origenes + 1) * 0.8)) - 1, origenes - 1)
@@ -68,21 +75,21 @@ def nutrientes(producto, presentacion):
     return float(kg.group(1).replace(",", ".")) * pct / 100 if pct else None
 
 
-def recomendar(posicion, var_6m, li80, ls80, precio):
-    """Regla de compra: combina que tan caro esta hoy frente a dos anos con el rango estimado a seis meses."""
+def recomendar(posicion, var, li80, ls80, precio, meses=6):
+    """Regla de compra: que tan caro esta hoy frente a dos anos y hacia donde va el rango estimado."""
     if ls80 < precio:
-        return "esperar", "Todo el rango estimado a seis meses queda por debajo del precio de hoy."
-    if posicion >= 0.67 and var_6m <= -2:
-        return "esperar", "Está cerca de su precio más alto en dos años y la estimación central es a la baja."
+        return "esperar", f"Se espera que baje en los próximos {meses} meses."
+    if posicion >= 0.67 and var <= -2:
+        return "esperar", "Está cerca de su precio más alto en dos años y se espera que baje."
     if li80 > precio:
-        return "comprar", "Todo el rango estimado a seis meses queda por encima del precio de hoy."
-    if posicion <= 0.33 and var_6m >= -1:
+        return "comprar", f"Se espera que suba en los próximos {meses} meses."
+    if posicion <= 0.33 and var >= -1:
         return "comprar", "Está cerca de su precio más bajo en dos años y no se estima una baja."
     return "normal", "Precio en la zona media de los últimos dos años, sin señal clara."
 
 
 def _un_producto(clave, y):
-    elegido, mae, cuantil = evaluar(y)
+    elegido, mae, cuantil = evaluar(y, meses=plazo(clave[0]))
     pred = np.asarray(CANDIDATOS[elegido](y, c.HORIZONTE))
     precio = float(y.iloc[-1])
     fechas = pd.date_range(y.index[-1] + pd.DateOffset(months=1), periods=c.HORIZONTE, freq="MS")
@@ -93,15 +100,17 @@ def _un_producto(clave, y):
     ventana = y.tail(24)
     rango = float(ventana.max() - ventana.min())
     posicion = (precio - float(ventana.min())) / rango if rango > 0 else 0.5
-    var_6m = (pron[-1]["valor"] / precio - 1) * 100
-    codigo, motivo = recomendar(posicion, var_6m, pron[-1]["li80"], pron[-1]["ls80"], precio)
+    meses = plazo(clave[0])
+    p = pron[meses - 1]
+    var = (p["valor"] / precio - 1) * 100
+    codigo, motivo = recomendar(posicion, var, p["li80"], p["ls80"], precio, meses)
     kg = nutrientes(clave[1], clave[2]) if clave[0] == "Fertilizantes" else None
     resumen = {
         **base, "fecha_precio": y.index[-1].strftime("%Y-%m-%d"), "precio": round(precio, 2),
         "minimo_24m": round(float(ventana.min()), 2), "maximo_24m": round(float(ventana.max()), 2),
         "posicion_24m": round(posicion, 3),
         "var_12m_pct": round((precio / float(y.iloc[-13]) - 1) * 100, 2) if len(y) > 12 else None,
-        "var_6m_pct": round(var_6m, 2), "modelo": elegido,
+        "plazo": meses, "var_plazo_pct": round(var, 2), "modelo": elegido,
         "mae_modelo": round(mae[elegido], 2), "mae_persistencia": round(mae["naive"], 2),
         "recomendacion": codigo, "motivo": motivo,
         "kg_nutriente": round(kg, 3) if kg else None,

@@ -48,7 +48,7 @@ function resumen(b, serie) {
   return { hist, ultimo, pron, final: pron[pron.length - 1] };
 }
 
-// ---------- Proyeccion ----------
+// Proyeccion
 async function proyeccion() {
   const b = await base();
   const c = colores();
@@ -97,7 +97,7 @@ async function proyeccion() {
   dibujar("total");
 }
 
-// ---------- Presupuesto ----------
+// Presupuesto
 function escenario(b, p) {
   const v = (serie, campo) => { const r = resumen(b, serie); return r.final[campo] / r.ultimo; };
   const calc = (campo) => +p.fertilizantes * v("fertilizantes", campo) + +p.plaguicidas * v("plaguicidas", campo) + +p.otros * v("total", campo);
@@ -148,7 +148,7 @@ async function presupuesto() {
   );
 }
 
-// ---------- Alertas ----------
+// Alertas
 async function actualizarContador() {
   const { count } = await db.from("alerta_evento").select("id", { count: "exact", head: true }).eq("leida", false);
   document.getElementById("contador").textContent = count ? `(${count})` : "";
@@ -200,7 +200,7 @@ async function alertas() {
   actualizarContador();
 }
 
-// ---------- Reportes ----------
+// Reportes
 function descargarCSV(nombre, filas) {
   const esc = (v) => {
     let s = String(v ?? "");
@@ -209,7 +209,7 @@ function descargarCSV(nombre, filas) {
   };
   const cab = Object.keys(filas[0]);
   const txt = [cab.join(";"), ...filas.map((f) => cab.map((k) => esc(f[k])).join(";"))].join("\r\n");
-  const url = URL.createObjectURL(new Blob(["﻿" + txt], { type: "text/csv;charset=utf-8" }));
+  const url = URL.createObjectURL(new Blob(["\uFEFF" + txt], { type: "text/csv;charset=utf-8" }));
   const a = h("a", { href: url, download: nombre });
   a.click();
   URL.revokeObjectURL(url);
@@ -277,7 +277,7 @@ async function reportes() {
   );
 }
 
-// ---------- Precios SIPSA ----------
+// Precios SIPSA
 async function precios() {
   const c = colores();
   const [catalogo, productos] = await Promise.all([q(db.from("sipsa_catalogo").select("*").order("grupo").order("producto")), leerProductos()]);
@@ -307,12 +307,13 @@ async function precios() {
     const pp = sDep.value === "Nacional" ? productos.get(claveProd(clave())) : null;
     const series = [{ nombre: "Precio mediano", color: c.pino, puntos: pts }], bandas = [];
     if (pp?.pron.length) {
-      const f = pp.pron.at(-1);
+      const f = pp.pron[pp.plazo - 1];
       cifras.append(
-        h("div", { class: "cifra" }, h("span", {}, `Estimado, ${formatoMes(fechaUTC(f.fecha))}`), h("strong", {}, `${pesos(f.valor)} (${pct(+pp.var_6m_pct)})`)),
+        h("div", { class: "cifra" }, h("span", {}, `Estimado, ${formatoMes(fechaUTC(f.fecha))}`), h("strong", {}, `${pesos(f.valor)} (${pct(+pp.var_plazo_pct)})`)),
         h("div", { class: "cifra" }, h("span", {}, "Recomendación"), h("strong", {}, RECOMENDACION[pp.recomendacion])));
-      series.push({ nombre: "Pronóstico", color: c.fosfato, punteada: true, puntos: [u, ...pp.pron.map((p) => ({ x: fechaUTC(p.fecha), y: +p.valor }))] });
-      bandas.push({ nombre: "Intervalo de 80 %", color: c.banda, puntos: [{ x: u.x, lo: u.y, hi: u.y }, ...pp.pron.map((p) => ({ x: fechaUTC(p.fecha), lo: +p.li80, hi: +p.ls80 }))] });
+      const tramo = pp.pron.slice(0, pp.plazo);
+      series.push({ nombre: "Lo que se espera", color: c.fosfato, punteada: true, puntos: [u, ...tramo.map((p) => ({ x: fechaUTC(p.fecha), y: +p.valor }))] });
+      bandas.push({ nombre: "Rango probable", color: c.banda, puntos: [{ x: u.x, lo: u.y, hi: u.y }, ...tramo.map((p) => ({ x: fechaUTC(p.fecha), lo: +p.li80, hi: +p.ls80 }))] });
     }
     grafica(g1, { series, bandas, alto: 280, decimales: 0, descripcion: `Precio mediano de ${clave().producto} en ${sDep.value}` });
   }
@@ -342,7 +343,7 @@ async function precios() {
   llenarProductos();
   pagina(
     h("h1", {}, "Cómo ha cambiado el precio"),
-    h("p", {}, "Elija un producto para ver cómo ha subido o bajado su precio desde 2018 y lo que se espera para los próximos seis meses."),
+    h("p", {}, "Elija un producto para ver cómo ha subido o bajado su precio desde 2018 y lo que se espera para los próximos meses."),
     tipos,
     h("div", { class: "filtros" }, h("label", {}, "Grupo", sGrupo), h("label", {}, "Producto", sProd), h("label", {}, "Departamento", sDep)),
     cifras,
@@ -353,7 +354,7 @@ async function precios() {
   await contraste();
 }
 
-// ---------- Monitoreo ----------
+// Monitoreo
 async function monitoreo() {
   const b = await base();
   const c = colores();
@@ -391,7 +392,8 @@ async function monitoreo() {
   });
 }
 
-// ---------- Datos compartidos de las funciones para el productor ----------
+// Datos compartidos de las funciones para el productor
+const MESES_MERCADO = 3;
 const SERIE_GRUPO = { Fertilizantes: "fertilizantes", Fungicidas: "plaguicidas", Herbicidas: "plaguicidas", Insecticidas: "plaguicidas" };
 const TIPOS = { productor: "Productor o productora", asociacion: "Asociación o cooperativa", almacen: "Almacén de insumos", asistente: "Asistente técnico", otro: "Otro" };
 
@@ -437,8 +439,9 @@ async function calcularCanasta() {
     const usado = local ?? nacional;
     const barato = suyos.filter((p) => p.departamento !== "Nacional").sort((x, y) => x.precio - y.precio)[0];
     const r = SERIE_GRUPO[it.grupo] ? resumen(b, SERIE_GRUPO[it.grupo]) : null;
-    const pp = productos.get(claveProd(it)), f6 = pp?.pron.at(-1);
-    const factor = (campo) => (f6 ? f6[campo] / pp.precio : r ? r.final[campo] / r.ultimo : 1);
+    const pp = productos.get(claveProd(it)), f3 = pp?.pron[MESES_MERCADO - 1];
+    const fi = r?.pron[MESES_MERCADO - 1];
+    const factor = (campo) => (f3 ? f3[campo] / pp.precio : fi ? fi[campo] / r.ultimo : 1);
     const sub = usado ? usado.precio * it.cantidad : null;
     return {
       it, usado, esLocal: Boolean(local), nacional, barato, sub, pp,
@@ -449,14 +452,14 @@ async function calcularCanasta() {
   return { perfil, filas, total: { hoy: suma("sub"), bajo: suma("bajo"), central: suma("central"), alto: suma("alto") } };
 }
 
-// ---------- Pronóstico por producto y recomendación de compra ----------
+// Pronóstico por producto y recomendación de compra
 const INSUMOS = ["Fertilizantes", "Fungicidas", "Herbicidas", "Insecticidas"];
 const ORDEN_GRUPOS = ["Tubérculos y plátanos", "Verduras y hortalizas", "Frutas", "Granos y cereales", "Carnes", "Lácteos y huevos", "Pescados", "Abarrotes", ...INSUMOS];
 const esInsumo = (g) => INSUMOS.includes(g);
 const ordenarGrupos = (gs) => [...gs].sort((x, y) => ORDEN_GRUPOS.indexOf(x) - ORDEN_GRUPOS.indexOf(y));
 const unidad = (p) => ({ "1 kilogramo": "por kilo", "1 unidad": "por unidad", "1 litro": "por litro" }[p] ?? `por ${p}`);
 const nombreProd = (r) => (esInsumo(r.grupo) ? `${r.producto} (${r.presentacion})` : r.producto);
-const sinTildes = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const sinTildes = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const claveProd = (f) => `${f.grupo}|${f.producto}|${f.presentacion}`;
 const RECOMENDACION = { comprar: "Buen momento para comprar", esperar: "Mejor esperar", normal: "Precio normal" };
 const ORDEN_REC = { comprar: 0, normal: 1, esperar: 2 };
@@ -465,7 +468,7 @@ let tipoActual = "alimentos";
 // Dos botones grandes (alimentos o insumos del campo) y la lista de grupos del tipo elegido.
 function selectorGrupo(grupos, alCambiar) {
   const sGrupo = h("select");
-  const botones = [["alimentos", "🥔 Alimentos"], ["insumos", "🌱 Insumos del campo"]].map(([k, t]) =>
+  const botones = [["alimentos", "Alimentos"], ["insumos", "Insumos del campo"]].map(([k, t]) =>
     h("button", { type: "button", class: "opcion", "data-tipo": k, onclick: () => { tipoActual = k; llenar(); alCambiar(); } }, t));
   function llenar() {
     sGrupo.replaceChildren(...grupos.filter((g) => esInsumo(g) === (tipoActual === "insumos")).map((g) => h("option", {}, g)));
@@ -502,23 +505,23 @@ function medidor(r) {
 
 // Tarjeta de un producto: precio de hoy, qué tan caro está, qué se espera y por qué.
 function tarjetaProducto(r, local, enDep, conBoton = true) {
-  const f = r.pron.at(-1);
   const boton = h("button", { type: "button", class: "secundario", onclick: async () => {
     boton.disabled = true;
     const { error } = await db.from("canasta_item").upsert(
       { grupo: r.grupo, producto: r.producto, presentacion: r.presentacion, cantidad: 1, user_id: session.user.id },
       { onConflict: "user_id,grupo,producto,presentacion", ignoreDuplicates: true });
-    boton.textContent = error ? "No se pudo agregar" : "✓ Está en mi mercado";
-  } }, "＋ Agregar a mi mercado");
+    boton.textContent = error ? "No se pudo agregar" : "Agregado a mi mercado";
+  } }, "Agregar a mi mercado");
+  const f = r.pron[r.plazo - 1];
   return h("article", { class: `tarjeta ${r.recomendacion}` },
     h("h3", {}, nombreProd(r)),
     etiqueta(r),
     h("p", { class: "precio" }, h("strong", {}, pesos(local ? local.precio : r.precio)), ` ${unidad(r.presentacion)}`,
       enDep && !local ? h("span", { class: "pequeno" }, " (precio del país)") : ""),
     medidor(r),
-    h("p", {}, +r.var_6m_pct === 0
-      ? `En 6 meses: parecido a hoy (entre ${pesos(f.li80)} y ${pesos(f.ls80)}).`
-      : `En 6 meses: cerca de ${pesos(f.valor)} (entre ${pesos(f.li80)} y ${pesos(f.ls80)}).`),
+    h("p", {}, +r.var_plazo_pct === 0
+      ? `En ${r.plazo} meses: parecido a hoy (entre ${pesos(f.li80)} y ${pesos(f.ls80)}).`
+      : `En ${r.plazo} meses: cerca de ${pesos(f.valor)} (entre ${pesos(f.li80)} y ${pesos(f.ls80)}).`),
     h("p", { class: "pequeno" }, r.motivo),
     conBoton ? boton : "");
 }
@@ -531,7 +534,7 @@ async function comprar() {
   const locales = enDep ? await q(db.from("sipsa_precio_reciente").select("grupo,producto,presentacion,precio").eq("departamento", perfil.departamento)) : [];
   const local = new Map(locales.map((l) => [claveProd(l), l]));
   const salida = h("div");
-  const buscar = h("input", { type: "search", placeholder: "Escriba un producto: papa, arroz, huevo, urea…" });
+  const buscar = h("input", { type: "search", placeholder: "Escriba un producto: papa, arroz, huevo, urea" });
   let filtro = "todos";
   const chips = [["todos", "Todos"], ["comprar", "Buen momento"], ["normal", "Precio normal"], ["esperar", "Mejor esperar"]].map(([k, t]) =>
     h("button", { type: "button", class: "chip", "data-filtro": k, onclick: () => { filtro = k; dibujar(); } }, t));
@@ -554,7 +557,7 @@ async function comprar() {
     salida.replaceChildren(
       lista.length
         ? h("div", { class: "tarjetas" }, lista.map((r) => tarjetaProducto(r, local.get(claveProd(r)), enDep)))
-        : h("p", {}, texto ? `No encontramos «${buscar.value.trim()}» en ${tipoActual === "insumos" ? "insumos" : "alimentos"}. Pruebe con otra palabra o cambie de tipo arriba.` : "No hay productos con esa recomendación en este grupo."),
+        : h("p", {}, texto ? `No encontramos "${buscar.value.trim()}" en ${tipoActual === "insumos" ? "insumos" : "alimentos"}. Pruebe con otra palabra o cambie de tipo arriba.` : "No hay productos con esa recomendación en este grupo."),
       ...(nutri.length ? [h("div", { class: "panel" }, h("h2", {}, "¿Cuál abono rinde más por su plata?"),
         h("p", {}, "Un bulto más barato no siempre rinde más. Aquí se divide el precio del bulto entre los kilos de nitrógeno, fósforo y potasio que trae. El primero es el que más nutriente da por cada peso."),
         h("div", { class: "tabla-scroll" }, h("table", {},
@@ -581,12 +584,12 @@ async function comprar() {
     h("div", { class: "chips", role: "group", "aria-label": "Filtrar por recomendación" }, chips),
     salida,
     h("p", { class: "pequeno" }, enDep ? `Precios de ${perfil.departamento} cuando hay dato; si no, el del país. ` : "Precios del país. Elija su departamento en Mi mercado para ver los de su zona. ",
-      "Los alimentos son precios mayoristas (plazas y centrales de abastos, DANE): en la tienda cuestan más, pero suben y bajan parecido. Los insumos son precios de almacén. La estimación a seis meses es una ayuda para decidir, no una garantía."),
+      "Los alimentos son precios mayoristas (plazas y centrales de abastos, DANE): en la tienda cuestan más, pero suben y bajan parecido. Los insumos son precios de almacén. Lo que se espera es una ayuda para decidir, no una garantía."),
   );
   dibujar();
 }
 
-// ---------- Inicio ----------
+// Inicio
 async function inicio() {
   const [b, mercado, canasta, productos] = await Promise.all([base(), leerMercado(), calcularCanasta(), leerProductos()]);
   const { count: sinLeer } = await db.from("alerta_evento").select("id", { count: "exact", head: true }).eq("leida", false);
@@ -598,8 +601,8 @@ async function inicio() {
     const s = senal(b, serie);
     return h("div", { class: `senal ${s.tipo}` }, h("span", { class: "pequeno" }, titulo), h("strong", {}, s.titulo), h("p", {}, s.texto));
   };
-  const accion = (ruta, icono, titulo, texto) => h("a", { class: "accion", href: `#${ruta}` },
-    h("span", { class: "icono", "aria-hidden": "true" }, icono), h("strong", {}, titulo), h("span", {}, texto));
+  const accion = (ruta, titulo, texto) => h("a", { class: "accion", href: `#${ruta}` },
+    h("strong", {}, titulo), h("span", {}, texto));
   const sinDep = canasta.perfil.departamento === "Nacional";
 
   pagina(
@@ -608,10 +611,10 @@ async function inicio() {
     ...(sinDep ? [h("p", { class: "aviso" }, "Para ver los precios de su zona, ", h("a", { href: "#canasta" }, "elija su departamento"), ". Solo toma un momento.")] : []),
     h("h2", {}, "¿Qué quiere hacer?"),
     h("div", { class: "acciones" },
-      accion("comprar", "🛒", "Qué comprar hoy", "Productos a buen precio y los que conviene esperar."),
-      accion("canasta", "📋", "Mi mercado", canasta.total ? `Hoy le cuesta ${pesos(canasta.total.hoy)}.` : "Arme su lista y vea cuánto le cuesta."),
-      accion("regional", "📍", "Dónde es más barato", "Compare el precio entre departamentos."),
-      accion("precios", "📈", "Cómo ha cambiado el precio", "La historia de cada producto y lo que se espera.")),
+      accion("comprar", "Qué comprar hoy", "Productos a buen precio y los que conviene esperar."),
+      accion("canasta", "Mi mercado", canasta.total ? `Hoy le cuesta ${pesos(canasta.total.hoy)}.` : "Arme su lista y vea cuánto le cuesta."),
+      accion("regional", "Dónde es más barato", "Compare el precio entre departamentos."),
+      accion("precios", "Cómo ha cambiado el precio", "La historia de cada producto y lo que se espera.")),
     h("div", { class: "panel" }, h("h2", {}, "Alimentos a buen precio hoy"),
       mejores(false, 6).length
         ? h("div", { class: "tarjetas" }, mejores(false, 6).map((r) => tarjetaProducto(r, null, false, false)))
@@ -627,7 +630,7 @@ async function inicio() {
   );
 }
 
-// ---------- Mi canasta ----------
+// Mi canasta
 async function canasta() {
   const [c0, catalogo, deps] = await Promise.all([
     calcularCanasta(),
@@ -655,7 +658,7 @@ async function canasta() {
       h("label", {}, "Departamento", h("select", { name: "departamento" },
         h("option", { value: "Nacional", selected: perfil.departamento === "Nacional" }, "Todo el país"),
         deps.map((d) => h("option", { selected: d.departamento === perfil.departamento }, d.departamento)))),
-      h("label", {}, "Cultivo principal", h("input", { name: "cultivo", maxlength: 60, value: perfil.cultivo ?? "", placeholder: "Papa, arroz, café…" })),
+      h("label", {}, "Cultivo principal", h("input", { name: "cultivo", maxlength: 60, value: perfil.cultivo ?? "", placeholder: "Papa, arroz, café" })),
       h("label", {}, "Área (hectáreas)", h("input", { name: "area_ha", type: "number", min: 0, step: "0.1", value: perfil.area_ha ?? "" }))),
     h("button", { class: "secundario" }, "Guardar mis datos"), msgPerfil);
 
@@ -677,22 +680,22 @@ async function canasta() {
   },
     tipos,
     h("div", { class: "fila-form" }, h("label", {}, "Grupo", sGrupo), h("label", {}, "Producto", sProd), h("label", {}, "¿Cuánto compra? (kilos, unidades o bultos)", cantidad)),
-    h("button", {}, "＋ Agregar a mi mercado"), msg);
+    h("button", {}, "Agregar a mi mercado"), msg);
 
   const ahorro = filas.reduce((a, f) => a + (f.barato && f.usado && f.barato.precio < f.usado.precio ? (f.usado.precio - f.barato.precio) * f.it.cantidad : 0), 0);
   const cuerpo = filas.map((f) => h("tr", {},
     h("td", {}, nombreProd(f.it)),
     h("td", {}, numero(f.it.cantidad, 1)),
     h("td", {}, f.usado ? `${pesos(f.usado.precio)}${f.esLocal ? "" : " (nacional)"}` : "Sin precio reciente"),
-    h("td", {}, f.sub ? pesos(f.sub) : "—"),
-    h("td", {}, f.pp ? etiqueta(f.pp) : "—"),
-    h("td", {}, f.barato && f.usado ? `${f.barato.departamento}: ${pesos(f.barato.precio)} (${pct((f.barato.precio / f.usado.precio - 1) * 100)})` : "—"),
-    h("td", {}, f.sub ? `${pesos(f.central)} (${pesos(f.bajo)} a ${pesos(f.alto)})` : "—"),
+    h("td", {}, f.sub ? pesos(f.sub) : "-"),
+    h("td", {}, f.pp ? etiqueta(f.pp) : "-"),
+    h("td", {}, f.barato && f.usado ? `${f.barato.departamento}: ${pesos(f.barato.precio)} (${pct((f.barato.precio / f.usado.precio - 1) * 100)})` : "-"),
+    h("td", {}, f.sub ? `${pesos(f.central)} (${pesos(f.bajo)} a ${pesos(f.alto)})` : "-"),
     h("td", {}, h("button", { class: "secundario", onclick: async () => { await db.from("canasta_item").delete().eq("id", f.it.id); canasta(); } }, "Quitar"))));
 
   pagina(
     h("h1", {}, "Mi mercado"),
-    h("p", {}, "Haga la lista de lo que compra: alimentos para la casa o insumos para el cultivo. Le mostramos cuánto cuesta hoy en su departamento, dónde está más barato y cuánto podría costar en seis meses."),
+    h("p", {}, "Haga la lista de lo que compra: alimentos para la casa o insumos para el cultivo. Le mostramos cuánto cuesta hoy en su departamento, dónde está más barato y cuánto podría costar en tres meses."),
     h("div", { class: "panel" }, h("h2", {}, "1. Mis datos"), h("p", { class: "pequeno" }, "Con su departamento le mostramos los precios de su zona."), formPerfil),
     h("div", { class: "panel" }, h("h2", {}, "2. Agregar un producto"), formItem),
     h("div", { class: "panel" }, h("h2", {}, `3. Lo que cuesta mi mercado en ${perfil.departamento === "Nacional" ? "el país" : perfil.departamento}`),
@@ -700,18 +703,18 @@ async function canasta() {
         ? h("div", {},
             h("div", { class: "cifras" },
               h("div", { class: "cifra" }, h("span", {}, "Costo hoy"), h("strong", {}, pesos(total.hoy))),
-              h("div", { class: "cifra" }, h("span", {}, "Estimado en 6 meses"), h("strong", {}, `${pesos(total.central)} (${pct((total.central / total.hoy - 1) * 100)})`)),
+              h("div", { class: "cifra" }, h("span", {}, "En 3 meses podría costar"), h("strong", {}, `${pesos(total.central)} (${pct((total.central / total.hoy - 1) * 100)})`)),
               ...(perfil.area_ha > 0 ? [h("div", { class: "cifra" }, h("span", {}, "Costo hoy por hectárea"), h("strong", {}, pesos(total.hoy / perfil.area_ha)))] : []),
               ...(ahorro > 0 ? [h("div", { class: "cifra" }, h("span", {}, "Diferencia frente al departamento más barato"), h("strong", {}, pesos(ahorro)))] : [])),
             h("div", { class: "tabla-scroll" }, h("table", {},
-              h("thead", {}, h("tr", {}, ["Producto", "Cantidad", "Precio unitario", "Subtotal hoy", "Recomendación", "Departamento más barato", "Estimado en 6 meses (rango)", ""].map((t) => h("th", {}, t)))),
+              h("thead", {}, h("tr", {}, ["Producto", "Cantidad", "Precio unitario", "Subtotal hoy", "Recomendación", "Departamento más barato", "En 3 meses (rango)", ""].map((t) => h("th", {}, t)))),
               h("tbody", {}, cuerpo))))
         : h("p", {}, "Aún no hay productos. Agregue el primero con el formulario de arriba.")),
-    h("p", { class: "pequeno" }, "Precio unitario: mediana de los precios reportados al DANE en los últimos tres meses; si su departamento no tiene dato se usa el nacional. La estimación a seis meses usa el pronóstico de precio de cada producto; si un producto no lo tiene, se aplica la variación del subíndice de su grupo. El departamento más barato no incluye transporte."),
+    h("p", { class: "pequeno" }, "Precio unitario: mediana de los precios reportados al DANE en los últimos tres meses; si su departamento no tiene dato se usa el nacional. La estimación a tres meses usa el pronóstico de cada producto; si un producto no lo tiene, se usa la variación del índice de su grupo. El departamento más barato no incluye transporte."),
   );
 }
 
-// ---------- Comparador regional ----------
+// Comparador regional
 async function regional() {
   const [catalogo, perfil] = await Promise.all([q(db.from("sipsa_catalogo").select("*").order("grupo").order("producto")), leerPerfil()]);
   const sProd = h("select");
@@ -755,7 +758,7 @@ async function regional() {
   await dibujar();
 }
 
-// ---------- Mercado internacional ----------
+// Mercado internacional
 async function mercado() {
   const c = colores();
   const [m, urea] = await Promise.all([
@@ -787,7 +790,7 @@ async function mercado() {
   );
   grafica(g1, { series: [
     { nombre: "Precio mediano en almacén (SIPSA-I)", color: c.pino, puntos: urea.map((f) => ({ x: fechaUTC(f.fecha), y: +f.precio })) },
-    { nombre: "Costo de importación (Pink Sheet × TRM)", color: c.fosfato, punteada: true, puntos: bulto },
+    { nombre: "Costo de importación (precio internacional por TRM)", color: c.fosfato, punteada: true, puntos: bulto },
   ], alto: 300, decimales: 0, descripcion: "Precio de la urea en almacén frente a su costo de importación en pesos por bulto" });
   grafica(g2, { series: [
     { nombre: "Urea", color: c.pino, puntos: serie("urea_usd") },
@@ -797,7 +800,7 @@ async function mercado() {
   grafica(g3, { series: [{ nombre: "TRM", color: c.pino, puntos: serie("trm") }], alto: 260, decimales: 0, descripcion: "Tasa representativa del mercado mensual" });
 }
 
-// ---------- Navegacion ----------
+// Navegacion
 const RUTAS = { inicio, comprar, proyeccion, canasta, regional, mercado, presupuesto, alertas, reportes, precios, monitoreo };
 const NOMBRES = { inicio: "Inicio", comprar: "Qué comprar hoy", proyeccion: "Índice de insumos", canasta: "Mi mercado", regional: "Dónde es más barato", mercado: "Mercado internacional", presupuesto: "Presupuesto", alertas: "Avisos", reportes: "Reportes", precios: "Cómo ha cambiado el precio", monitoreo: "Qué tan bien acierta" };
 async function navegar() {

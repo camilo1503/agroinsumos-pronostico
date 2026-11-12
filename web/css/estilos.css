@@ -156,7 +156,6 @@ main > h1 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); }
 .celda-barra { width: 28%; min-width: 6rem; }
 .medidor { display: block; height: .7rem; background: var(--s-verde); border-radius: 2px; }
 tr.elegido .medidor { background: var(--s-azul); }
-.riel nav a span[aria-hidden] { display: inline-block; width: 1.6em; }
 .riel .separador { display: block; padding: 1.1rem 1.2rem .3rem; font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; opacity: .7; }
 main button, main .boton { min-height: 2.9rem; }
 .tipos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; margin: 1rem 0; max-width: 34rem; }
@@ -171,7 +170,6 @@ main button, main .boton { min-height: 2.9rem; }
 .acciones { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; margin: .6rem 0 1.6rem; }
 .accion { display: flex; flex-direction: column; gap: .25rem; padding: 1.1rem 1.2rem; background: var(--superficie); border: 2px solid var(--linea); border-radius: 8px; color: var(--tinta); text-decoration: none; }
 .accion:hover, .accion:focus-visible { border-color: var(--pino); }
-.accion .icono { font-size: 2.2rem; line-height: 1; }
 .accion strong { font-size: 1.25rem; font-stretch: 112%; }
 .accion span:last-child { color: var(--tinta-2); font-size: .95rem; }
 .tarjetas { display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: 1rem; margin-bottom: 1.4rem; }

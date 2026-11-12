@@ -45,10 +45,10 @@
 | `horizonte`, `fecha`, `valor`, `li80`, `ls80` | Precio estimado y su intervalo de 80 % para cada uno de los seis meses, en COP |
 | `precio`, `fecha_precio` | Último precio mediano nacional |
 | `minimo_24m`, `maximo_24m`, `posicion_24m` | Rango de 24 meses y posición del precio actual (0 = mínimo, 1 = máximo) |
-| `var_12m_pct`, `var_6m_pct` | Variación observada en doce meses y estimada a seis meses |
+| `plazo`, `var_12m_pct`, `var_plazo_pct` | Meses de la recomendación (3 en alimentos, 6 en insumos), variación observada en doce meses y variación estimada al plazo |
 | `modelo`, `mae_modelo`, `mae_persistencia` | Modelo publicado (`naive` o `ets`) y errores en validación |
 | `recomendacion`, `motivo` | `comprar`, `esperar` o `normal`, y la razón |
-| `kg_nutriente`, `precio_kg_nutriente` | Kilos de N + P₂O₅ + K₂O por unidad y precio por kilo de nutriente |
+| `kg_nutriente`, `precio_kg_nutriente` | Kilos de N + P2O5 + K2O por unidad y precio por kilo de nutriente |
 
 ### `data/processed/alimentos_precios.csv`
 

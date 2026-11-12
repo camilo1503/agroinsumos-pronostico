@@ -25,7 +25,7 @@ El reporte completo está en [`reports/calidad_datos.json`](../reports/calidad_d
 - 93 observaciones de diciembre de 2018 a agosto de 2026, sin meses ausentes ni faltantes en el índice total.
 - El anexo coincide con Datos Abiertos: la diferencia máxima es de 0,005 puntos, atribuible al redondeo.
 - Los ceros del anexo representan ausencia de dato y se convirtieron en faltantes. Otros insumos inicia en enero de 2021, clorpirifos termina en diciembre de 2023 y fipronil en agosto de 2024.
-- La ampliación de canasta de enero de 2024 coincide con una variación de −1,63 % (z robusto −1,02) y la exclusión de fipronil en septiembre de 2024 con +0,22 % (z robusto 0,06). Ninguna aparece como atípica, así que no se aplicó empalme. Esto solo evalúa el índice total y no descarta efectos menores de composición.
+- La ampliación de canasta de enero de 2024 coincide con una variación de -1,63 % (z robusto -1,02) y la exclusión de fipronil en septiembre de 2024 con +0,22 % (z robusto 0,06). Ninguna aparece como atípica, así que no se aplicó empalme. Esto solo evalúa el índice total y no descarta efectos menores de composición.
 - Los meses atípicos (2021-2023 y abril-mayo de 2026) se conservan porque corresponden a movimientos reales del mercado.
 - SIPSA-I se resumió con la mediana mensual. Para contrastar, se encadenó la mediana de las variaciones de series comparables (mismo artículo, casa comercial, presentación y departamento). Su variación a 12 meses tiene correlación de 0,87 a 0,98 con los subíndices UPRA.
 
@@ -39,7 +39,7 @@ Todos los modelos reciben únicamente datos hasta el mes de origen.
 | Estacional ingenuo | Referencia | Repite el valor del mismo mes del año anterior |
 | ETS | Estadístico | Sobre logaritmo; AICc elige entre sin tendencia, tendencia aditiva o amortiguada |
 | SARIMA | Estadístico | Sobre logaritmo con d = 1, p y q de 0 a 2 y término estacional opcional, elegidos por AICc en cada origen |
-| Ridge directo | Aprendizaje automático | Un modelo por horizonte para el cambio logarítmico; rezagos del índice, variaciones de TRM, urea y DAP, y estacionalidad; α elegido con validación temporal interna |
+| Ridge directo | Aprendizaje automático | Un modelo por horizonte para el cambio logarítmico; rezagos del índice, variaciones de TRM, urea y DAP, y estacionalidad; alfa elegido con validación temporal interna |
 
 ## Fase 4. Evaluación
 
@@ -73,9 +73,11 @@ Las figuras están en [`reports/figures`](../reports/figures).
 
 ### Pronóstico por producto
 
-Además del índice, se pronostica a seis meses el precio mediano nacional de cada producto con al menos 48 meses continuos y dato reciente (`src/productos.py`): los insumos de SIPSA-I y 64 alimentos de la canasta familiar tomados de los precios mayoristas de SIPSA (`src/alimentos.py`), elegidos por ser de consumo frecuente en los hogares. Los precios de alimentos son mayoristas, de plazas y centrales de abastos; el precio al consumidor es mayor. Para cada producto se comparan persistencia y suavizamiento exponencial (ETS) en 18 orígenes de validación temporal; se publica ETS solo si su MAE es menor, y en caso contrario la estimación central es el último precio. El intervalo de 80 % sale del cuantil del error logarítmico por horizonte en esos mismos orígenes, por lo que no hay un bloque de prueba independiente por producto.
+Además del índice, se pronostica hasta seis meses adelante el precio mediano nacional de cada producto con al menos 48 meses continuos y dato reciente (`src/productos.py`): los insumos de SIPSA-I y 64 alimentos de la canasta familiar tomados de los precios mayoristas de SIPSA (`src/alimentos.py`), elegidos por ser de consumo frecuente en los hogares. Los precios de alimentos son mayoristas, de plazas y centrales de abastos; el precio al consumidor es mayor. Para cada producto se comparan persistencia y suavizamiento exponencial (ETS) en 18 orígenes de validación temporal; se publica ETS solo si su MAE es menor, y en caso contrario la estimación central es el último precio. El intervalo de 80 % sale del cuantil del error logarítmico por horizonte en esos mismos orígenes, por lo que no hay un bloque de prueba independiente por producto.
 
-La recomendación de compra es una regla, no un modelo: «comprar» si todo el intervalo queda por encima del precio de hoy, o si el precio está en el tercio bajo de los últimos 24 meses y no se estima una baja; «esperar» si todo el intervalo queda por debajo, o si está en el tercio alto y la estimación central baja al menos 2 %; «precio normal» en los demás casos. Para fertilizantes sólidos con grado declarado se calcula el precio por kilo de nutriente (N + P₂O₅ + K₂O).
+El plazo de la recomendación es de 3 meses para alimentos y 6 para insumos. Los alimentos frescos cambian de precio muy rápido: a 6 meses el rango de 80 % tiene un ancho mediano de 50 % del precio, y a 3 meses de 36 %, lo que permite dar señales más útiles. En insumos el rango a 6 meses es de 8 %. En cada producto el modelo se elige por su error dentro de su plazo.
+
+La recomendación es una regla: "comprar" si todo el rango al plazo queda por encima del precio de hoy, o si el precio está en el tercio más bajo de los últimos 24 meses y no se espera que baje; "esperar" si todo el rango queda por debajo, o si está en el tercio más alto y la estimación central baja al menos 2 %; "precio normal" en los demás casos. En fertilizantes sólidos con grado declarado se calcula además el precio por kilo de nutriente (N + P2O5 + K2O).
 
 ## Fase 5. Despliegue
 

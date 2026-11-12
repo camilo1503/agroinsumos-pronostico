@@ -11,12 +11,12 @@ Abarrotes,Azúcar sulfitada,1 kilogramo,3,2027-01-01,2966.0,2641.66,3330.17
 Abarrotes,Azúcar sulfitada,1 kilogramo,4,2027-02-01,2966.0,2601.22,3381.93
 Abarrotes,Azúcar sulfitada,1 kilogramo,5,2027-03-01,2966.0,2568.46,3425.07
 Abarrotes,Azúcar sulfitada,1 kilogramo,6,2027-04-01,2966.0,2568.05,3425.61
-Abarrotes,Café molido,1 kilogramo,1,2026-11-01,49372.0,46004.01,52986.56
-Abarrotes,Café molido,1 kilogramo,2,2026-12-01,49372.0,44019.53,55375.3
-Abarrotes,Café molido,1 kilogramo,3,2027-01-01,49372.0,40278.11,60519.08
-Abarrotes,Café molido,1 kilogramo,4,2027-02-01,49372.0,37770.2,64537.51
-Abarrotes,Café molido,1 kilogramo,5,2027-03-01,49372.0,36340.69,67076.17
-Abarrotes,Café molido,1 kilogramo,6,2027-04-01,49372.0,34971.79,69701.74
+Abarrotes,Café molido,1 kilogramo,1,2026-11-01,48408.02,46895.72,49969.09
+Abarrotes,Café molido,1 kilogramo,2,2026-12-01,47545.63,44091.28,51270.6
+Abarrotes,Café molido,1 kilogramo,3,2027-01-01,46817.96,40405.05,54248.71
+Abarrotes,Café molido,1 kilogramo,4,2027-02-01,46202.52,37201.42,57381.48
+Abarrotes,Café molido,1 kilogramo,5,2027-03-01,45680.92,35262.04,59178.27
+Abarrotes,Café molido,1 kilogramo,6,2027-04-01,45238.1,34168.87,59893.27
 Abarrotes,Chocolate dulce,1 kilogramo,1,2026-11-01,33005.0,32205.31,33824.54
 Abarrotes,Chocolate dulce,1 kilogramo,2,2026-12-01,33005.0,32009.01,34031.98
 Abarrotes,Chocolate dulce,1 kilogramo,3,2027-01-01,33005.0,31722.64,34339.2
@@ -29,12 +29,12 @@ Abarrotes,Harina de trigo,1 kilogramo,3,2027-01-01,2920.0,2821.02,3022.46
 Abarrotes,Harina de trigo,1 kilogramo,4,2027-02-01,2920.0,2816.56,3027.23
 Abarrotes,Harina de trigo,1 kilogramo,5,2027-03-01,2920.0,2810.91,3033.33
 Abarrotes,Harina de trigo,1 kilogramo,6,2027-04-01,2920.0,2773.83,3073.87
-Abarrotes,Harina precocida de maíz,1 kilogramo,1,2026-11-01,3556.5,3504.71,3609.06
-Abarrotes,Harina precocida de maíz,1 kilogramo,2,2026-12-01,3556.5,3459.19,3656.55
-Abarrotes,Harina precocida de maíz,1 kilogramo,3,2027-01-01,3556.5,3424.74,3693.33
-Abarrotes,Harina precocida de maíz,1 kilogramo,4,2027-02-01,3556.5,3364.84,3759.07
-Abarrotes,Harina precocida de maíz,1 kilogramo,5,2027-03-01,3556.5,3363.96,3760.06
-Abarrotes,Harina precocida de maíz,1 kilogramo,6,2027-04-01,3556.5,3332.6,3795.44
+Abarrotes,Harina precocida de maíz,1 kilogramo,1,2026-11-01,3560.43,3503.74,3618.03
+Abarrotes,Harina precocida de maíz,1 kilogramo,2,2026-12-01,3562.26,3469.7,3657.28
+Abarrotes,Harina precocida de maíz,1 kilogramo,3,2027-01-01,3563.72,3446.57,3684.85
+Abarrotes,Harina precocida de maíz,1 kilogramo,4,2027-02-01,3564.89,3396.37,3741.78
+Abarrotes,Harina precocida de maíz,1 kilogramo,5,2027-03-01,3565.83,3347.7,3798.17
+Abarrotes,Harina precocida de maíz,1 kilogramo,6,2027-04-01,3566.58,3316.91,3835.04
 Abarrotes,Lomitos de atún en lata,1 kilogramo,1,2026-11-01,38013.0,36764.54,39303.86
 Abarrotes,Lomitos de atún en lata,1 kilogramo,2,2026-12-01,38013.0,36285.31,39822.95
 Abarrotes,Lomitos de atún en lata,1 kilogramo,3,2027-01-01,38013.0,34723.32,41614.35
@@ -75,7 +75,7 @@ Carnes,"Carne de res, bola de pierna",1 kilogramo,1,2026-11-01,33854.81,33279.59
 Carnes,"Carne de res, bola de pierna",1 kilogramo,2,2026-12-01,34189.88,33085.74,35330.87
 Carnes,"Carne de res, bola de pierna",1 kilogramo,3,2027-01-01,34528.27,33348.07,35750.24
 Carnes,"Carne de res, bola de pierna",1 kilogramo,4,2027-02-01,34870.01,33455.19,36344.67
-Carnes,"Carne de res, bola de pierna",1 kilogramo,5,2027-03-01,35215.14,33476.92,37043.61
+Carnes,"Carne de res, bola de pierna",1 kilogramo,5,2027-03-01,35215.14,33476.9,37043.63
 Carnes,"Carne de res, bola de pierna",1 kilogramo,6,2027-04-01,35563.68,33516.55,37735.84
 Carnes,"Carne de res, costilla",1 kilogramo,1,2026-11-01,22466.03,21711.94,23246.31
 Carnes,"Carne de res, costilla",1 kilogramo,2,2026-12-01,22684.16,21829.89,23571.85
@@ -113,10 +113,10 @@ Fertilizantes,10-30-10,50 kilogramos,3,2026-12-01,212019.64,194291.8,231365.03
 Fertilizantes,10-30-10,50 kilogramos,4,2027-01-01,212019.64,191934.95,234206.05
 Fertilizantes,10-30-10,50 kilogramos,5,2027-02-01,212019.64,190973.98,235384.57
 Fertilizantes,10-30-10,50 kilogramos,6,2027-03-01,212019.64,190542.93,235917.05
-Fertilizantes,15-15-15,50 kilogramos,1,2026-10-01,166218.77,161782.18,170777.03
+Fertilizantes,15-15-15,50 kilogramos,1,2026-10-01,166218.77,161782.16,170777.04
 Fertilizantes,15-15-15,50 kilogramos,2,2026-11-01,164026.68,152631.67,176272.4
-Fertilizantes,15-15-15,50 kilogramos,3,2026-12-01,162293.83,149379.44,176324.72
-Fertilizantes,15-15-15,50 kilogramos,4,2027-01-01,160920.75,141079.6,183552.32
+Fertilizantes,15-15-15,50 kilogramos,3,2026-12-01,162293.83,149379.49,176324.66
+Fertilizantes,15-15-15,50 kilogramos,4,2027-01-01,160920.75,141079.67,183552.23
 Fertilizantes,15-15-15,50 kilogramos,5,2027-02-01,159830.65,139204.32,183513.25
 Fertilizantes,15-15-15,50 kilogramos,6,2027-03-01,158963.89,130181.39,194110.08
 Fertilizantes,17-6-18-2(Mg),50 kilogramos,1,2026-10-01,167491.97,165079.41,169939.78
@@ -125,12 +125,12 @@ Fertilizantes,17-6-18-2(Mg),50 kilogramos,3,2026-12-01,158253.71,147383.84,16992
 Fertilizantes,17-6-18-2(Mg),50 kilogramos,4,2027-01-01,155093.27,140428.56,171289.4
 Fertilizantes,17-6-18-2(Mg),50 kilogramos,5,2027-02-01,152610.43,136541.31,170570.67
 Fertilizantes,17-6-18-2(Mg),50 kilogramos,6,2027-03-01,150652.81,129368.99,175438.25
-Fertilizantes,Agrimins 8-5-0-6,46 kilogramos,1,2026-10-01,142557.66,140082.08,145076.99
-Fertilizantes,Agrimins 8-5-0-6,46 kilogramos,2,2026-11-01,142218.8,138228.96,146323.81
-Fertilizantes,Agrimins 8-5-0-6,46 kilogramos,3,2026-12-01,141941.57,137127.26,146924.91
-Fertilizantes,Agrimins 8-5-0-6,46 kilogramos,4,2027-01-01,141714.67,135826.55,147858.05
-Fertilizantes,Agrimins 8-5-0-6,46 kilogramos,5,2027-02-01,141528.91,134209.66,149247.32
-Fertilizantes,Agrimins 8-5-0-6,46 kilogramos,6,2027-03-01,141376.78,132982.08,150301.41
+Fertilizantes,Agrimins 8-5-0-6,46 kilogramos,1,2026-10-01,142557.66,140082.11,145076.95
+Fertilizantes,Agrimins 8-5-0-6,46 kilogramos,2,2026-11-01,142218.81,138228.96,146323.82
+Fertilizantes,Agrimins 8-5-0-6,46 kilogramos,3,2026-12-01,141941.58,137127.27,146924.91
+Fertilizantes,Agrimins 8-5-0-6,46 kilogramos,4,2027-01-01,141714.68,135826.55,147858.06
+Fertilizantes,Agrimins 8-5-0-6,46 kilogramos,5,2027-02-01,141528.92,134209.67,149247.33
+Fertilizantes,Agrimins 8-5-0-6,46 kilogramos,6,2027-03-01,141376.79,132982.08,150301.42
 Fertilizantes,Cal Dolomita,50 kilogramos,1,2026-10-01,19500.0,18934.78,20082.09
 Fertilizantes,Cal Dolomita,50 kilogramos,2,2026-11-01,19500.0,18958.33,20057.14
 Fertilizantes,Cal Dolomita,50 kilogramos,3,2026-12-01,19500.0,18989.83,20023.88
@@ -138,10 +138,10 @@ Fertilizantes,Cal Dolomita,50 kilogramos,4,2027-01-01,19500.0,18714.58,20318.38
 Fertilizantes,Cal Dolomita,50 kilogramos,5,2027-02-01,19500.0,18708.83,20324.62
 Fertilizantes,Cal Dolomita,50 kilogramos,6,2027-03-01,19500.0,18579.85,20465.72
 Fertilizantes,Cloruro de Potasio 0-0-60,50 kilogramos,1,2026-10-01,122008.95,119970.95,124081.57
-Fertilizantes,Cloruro de Potasio 0-0-60,50 kilogramos,2,2026-11-01,120503.88,114860.83,126424.16
-Fertilizantes,Cloruro de Potasio 0-0-60,50 kilogramos,3,2026-12-01,119313.2,113100.07,125867.64
+Fertilizantes,Cloruro de Potasio 0-0-60,50 kilogramos,2,2026-11-01,120503.87,114860.83,126424.16
+Fertilizantes,Cloruro de Potasio 0-0-60,50 kilogramos,3,2026-12-01,119313.19,113100.07,125867.64
 Fertilizantes,Cloruro de Potasio 0-0-60,50 kilogramos,4,2027-01-01,118369.13,111808.17,125315.09
-Fertilizantes,Cloruro de Potasio 0-0-60,50 kilogramos,5,2027-02-01,117619.26,103478.39,133692.54
+Fertilizantes,Cloruro de Potasio 0-0-60,50 kilogramos,5,2027-02-01,117619.25,103478.39,133692.54
 Fertilizantes,Cloruro de Potasio 0-0-60,50 kilogramos,6,2027-03-01,117022.78,104308.62,131286.66
 Fertilizantes,Crecer 500,900 gramos,1,2026-10-01,13550.24,13391.95,13710.4
 Fertilizantes,Crecer 500,900 gramos,2,2026-11-01,13550.24,13381.2,13721.42
@@ -156,15 +156,15 @@ Fertilizantes,Fosfato Diamónico (DAP) 18-46-0,50 kilogramos,4,2027-01-01,227336
 Fertilizantes,Fosfato Diamónico (DAP) 18-46-0,50 kilogramos,5,2027-02-01,226413.32,206399.01,248368.41
 Fertilizantes,Fosfato Diamónico (DAP) 18-46-0,50 kilogramos,6,2027-03-01,225677.66,205481.64,247858.67
 Fertilizantes,Nutrifoliar Completo,1 litro,1,2026-10-01,31689.27,30973.37,32421.71
-Fertilizantes,Nutrifoliar Completo,1 litro,2,2026-11-01,31836.22,31019.2,32674.77
-Fertilizantes,Nutrifoliar Completo,1 litro,3,2026-12-01,31983.86,31077.09,32917.09
-Fertilizantes,Nutrifoliar Completo,1 litro,4,2027-01-01,32132.19,31065.68,33235.31
-Fertilizantes,Nutrifoliar Completo,1 litro,5,2027-02-01,32281.2,30854.92,33773.4
-Fertilizantes,Nutrifoliar Completo,1 litro,6,2027-03-01,32430.9,31175.73,33736.6
+Fertilizantes,Nutrifoliar Completo,1 litro,2,2026-11-01,31836.22,31145.78,32541.98
+Fertilizantes,Nutrifoliar Completo,1 litro,3,2026-12-01,31983.86,31077.09,32917.1
+Fertilizantes,Nutrifoliar Completo,1 litro,4,2027-01-01,32132.19,31065.69,33235.29
+Fertilizantes,Nutrifoliar Completo,1 litro,5,2027-02-01,32281.2,30854.94,33773.38
+Fertilizantes,Nutrifoliar Completo,1 litro,6,2027-03-01,32430.9,31175.76,33736.57
 Fertilizantes,Nutrimins,1 litro,1,2026-10-01,20393.01,19967.37,20827.72
 Fertilizantes,Nutrimins,1 litro,2,2026-11-01,20476.21,20145.42,20812.42
-Fertilizantes,Nutrimins,1 litro,3,2026-12-01,20559.74,20231.4,20893.42
-Fertilizantes,Nutrimins,1 litro,4,2027-01-01,20643.62,20129.35,21171.03
+Fertilizantes,Nutrimins,1 litro,3,2026-12-01,20559.75,20231.4,20893.42
+Fertilizantes,Nutrimins,1 litro,4,2027-01-01,20643.62,20129.35,21171.04
 Fertilizantes,Nutrimins,1 litro,5,2027-02-01,20727.85,20242.8,21224.51
 Fertilizantes,Nutrimins,1 litro,6,2027-03-01,20812.41,20394.54,21238.85
 Fertilizantes,Sulfato de Amonio (SAM) 21-0-0-24(S),50 kilogramos,1,2026-10-01,89016.67,86120.1,92010.66
@@ -215,36 +215,36 @@ Frutas,Limón Tahití,1 kilogramo,3,2027-01-01,2522.29,1390.86,4574.12
 Frutas,Limón Tahití,1 kilogramo,4,2027-02-01,2522.29,1459.86,4357.9
 Frutas,Limón Tahití,1 kilogramo,5,2027-03-01,2522.29,1504.91,4227.45
 Frutas,Limón Tahití,1 kilogramo,6,2027-04-01,2522.29,1531.68,4153.57
-Frutas,Limón común,1 kilogramo,1,2026-11-01,3509.11,2356.42,5225.66
-Frutas,Limón común,1 kilogramo,2,2026-12-01,3509.11,1864.62,6603.92
-Frutas,Limón común,1 kilogramo,3,2027-01-01,3509.11,1594.49,7722.71
-Frutas,Limón común,1 kilogramo,4,2027-02-01,3509.11,1765.77,6973.64
-Frutas,Limón común,1 kilogramo,5,2027-03-01,3509.11,1702.66,7232.09
-Frutas,Limón común,1 kilogramo,6,2027-04-01,3509.11,1706.99,7213.74
+Frutas,Limón común,1 kilogramo,1,2026-11-01,3509.0,2356.44,5225.29
+Frutas,Limón común,1 kilogramo,2,2026-12-01,3509.0,1864.54,6603.83
+Frutas,Limón común,1 kilogramo,3,2027-01-01,3509.0,1594.47,7722.39
+Frutas,Limón común,1 kilogramo,4,2027-02-01,3509.0,1765.67,6973.61
+Frutas,Limón común,1 kilogramo,5,2027-03-01,3509.0,1702.61,7231.88
+Frutas,Limón común,1 kilogramo,6,2027-04-01,3509.0,1706.92,7213.63
 Frutas,Lulo,1 kilogramo,1,2026-11-01,5307.0,4867.79,5785.84
 Frutas,Lulo,1 kilogramo,2,2026-12-01,5307.0,4677.28,6021.5
 Frutas,Lulo,1 kilogramo,3,2027-01-01,5307.0,4587.35,6139.55
 Frutas,Lulo,1 kilogramo,4,2027-02-01,5307.0,4509.1,6246.09
 Frutas,Lulo,1 kilogramo,5,2027-03-01,5307.0,4330.68,6503.43
 Frutas,Lulo,1 kilogramo,6,2027-04-01,5307.0,4165.74,6760.92
-Frutas,Mango Tommy,1 kilogramo,1,2026-11-01,7624.1,4733.44,12280.06
-Frutas,Mango Tommy,1 kilogramo,2,2026-12-01,7624.1,3340.71,17399.56
-Frutas,Mango Tommy,1 kilogramo,3,2027-01-01,7624.1,2624.11,22151.09
-Frutas,Mango Tommy,1 kilogramo,4,2027-02-01,7624.1,2879.76,20184.67
-Frutas,Mango Tommy,1 kilogramo,5,2027-03-01,7624.1,3045.62,19085.39
-Frutas,Mango Tommy,1 kilogramo,6,2027-04-01,7624.1,2545.11,22838.67
+Frutas,Mango Tommy,1 kilogramo,1,2026-11-01,7624.0,4733.67,12279.14
+Frutas,Mango Tommy,1 kilogramo,2,2026-12-01,7624.0,3340.81,17398.56
+Frutas,Mango Tommy,1 kilogramo,3,2027-01-01,7624.0,2624.05,22151.0
+Frutas,Mango Tommy,1 kilogramo,4,2027-02-01,7624.0,2879.66,20184.8
+Frutas,Mango Tommy,1 kilogramo,5,2027-03-01,7624.0,3045.67,19084.59
+Frutas,Mango Tommy,1 kilogramo,6,2027-04-01,7624.0,2545.15,22837.72
 Frutas,Maracuyá,1 kilogramo,1,2026-11-01,5294.1,4258.53,6581.5
 Frutas,Maracuyá,1 kilogramo,2,2026-12-01,5294.1,4179.78,6705.51
 Frutas,Maracuyá,1 kilogramo,3,2027-01-01,5294.1,4053.89,6913.73
 Frutas,Maracuyá,1 kilogramo,4,2027-02-01,5294.1,3968.09,7063.24
 Frutas,Maracuyá,1 kilogramo,5,2027-03-01,5294.1,3816.33,7344.11
 Frutas,Maracuyá,1 kilogramo,6,2027-04-01,5294.1,3985.44,7032.48
-Frutas,Mora de Castilla,1 kilogramo,1,2026-11-01,6681.5,5604.39,7965.62
-Frutas,Mora de Castilla,1 kilogramo,2,2026-12-01,6681.5,5428.44,8223.8
-Frutas,Mora de Castilla,1 kilogramo,3,2027-01-01,6681.5,5543.85,8052.61
-Frutas,Mora de Castilla,1 kilogramo,4,2027-02-01,6681.5,5315.02,8399.31
-Frutas,Mora de Castilla,1 kilogramo,5,2027-03-01,6681.5,5079.33,8789.03
-Frutas,Mora de Castilla,1 kilogramo,6,2027-04-01,6681.5,4929.69,9055.82
+Frutas,Mora de Castilla,1 kilogramo,1,2026-11-01,6659.97,5586.27,7940.04
+Frutas,Mora de Castilla,1 kilogramo,2,2026-12-01,6659.97,5411.05,8197.16
+Frutas,Mora de Castilla,1 kilogramo,3,2027-01-01,6659.97,5526.08,8026.53
+Frutas,Mora de Castilla,1 kilogramo,4,2027-02-01,6659.97,5289.17,8386.06
+Frutas,Mora de Castilla,1 kilogramo,5,2027-03-01,6659.97,5054.63,8775.17
+Frutas,Mora de Castilla,1 kilogramo,6,2027-04-01,6659.97,4917.91,9019.13
 Frutas,Naranja Valencia,1 kilogramo,1,2026-11-01,2291.5,2103.4,2496.43
 Frutas,Naranja Valencia,1 kilogramo,2,2026-12-01,2291.5,1947.85,2695.77
 Frutas,Naranja Valencia,1 kilogramo,3,2027-01-01,2291.5,1917.79,2738.04
@@ -269,7 +269,7 @@ Frutas,Tomate de árbol,1 kilogramo,3,2027-01-01,4101.0,2572.44,6537.85
 Frutas,Tomate de árbol,1 kilogramo,4,2027-02-01,4101.0,2428.22,6926.13
 Frutas,Tomate de árbol,1 kilogramo,5,2027-03-01,4101.0,2315.51,7263.29
 Frutas,Tomate de árbol,1 kilogramo,6,2027-04-01,4101.0,2479.76,6782.2
-Fungicidas,Antracol 70 Wp,400 gramos,1,2026-10-01,27980.72,27723.45,28240.37
+Fungicidas,Antracol 70 Wp,400 gramos,1,2026-10-01,27980.72,27723.46,28240.37
 Fungicidas,Antracol 70 Wp,400 gramos,2,2026-11-01,28042.68,27770.53,28317.49
 Fungicidas,Antracol 70 Wp,400 gramos,3,2026-12-01,28104.78,27668.36,28548.07
 Fungicidas,Antracol 70 Wp,400 gramos,4,2027-01-01,28167.01,27737.34,28603.34
@@ -305,18 +305,18 @@ Fungicidas,Dithane M-45 Wp NT,1 kilogramo,3,2026-12-01,24133.33,23133.21,25176.6
 Fungicidas,Dithane M-45 Wp NT,1 kilogramo,4,2027-01-01,24133.33,22275.37,26146.26
 Fungicidas,Dithane M-45 Wp NT,1 kilogramo,5,2027-02-01,24133.33,22706.19,25650.17
 Fungicidas,Dithane M-45 Wp NT,1 kilogramo,6,2027-03-01,24133.33,22498.08,25887.44
-Fungicidas,Elosal 720 Sc,1 litro,1,2026-10-01,30780.78,30471.01,31093.71
-Fungicidas,Elosal 720 Sc,1 litro,2,2026-11-01,30960.99,30559.13,31368.14
+Fungicidas,Elosal 720 Sc,1 litro,1,2026-10-01,30780.78,30471.01,31093.7
+Fungicidas,Elosal 720 Sc,1 litro,2,2026-11-01,30960.99,30559.13,31368.13
 Fungicidas,Elosal 720 Sc,1 litro,3,2026-12-01,31142.25,30278.69,32030.45
-Fungicidas,Elosal 720 Sc,1 litro,4,2027-01-01,31324.58,30429.31,32246.19
-Fungicidas,Elosal 720 Sc,1 litro,5,2027-02-01,31507.97,30452.18,32600.37
-Fungicidas,Elosal 720 Sc,1 litro,6,2027-03-01,31692.44,30431.33,33005.81
-Fungicidas,Fitoraz 76 Wp,500 gramos,1,2026-10-01,30039.48,29774.23,30307.08
+Fungicidas,Elosal 720 Sc,1 litro,4,2027-01-01,31324.58,30429.3,32246.19
+Fungicidas,Elosal 720 Sc,1 litro,5,2027-02-01,31507.97,30452.17,32600.37
+Fungicidas,Elosal 720 Sc,1 litro,6,2027-03-01,31692.43,30431.33,33005.8
+Fungicidas,Fitoraz 76 Wp,500 gramos,1,2026-10-01,30039.47,29774.23,30307.08
 Fungicidas,Fitoraz 76 Wp,500 gramos,2,2026-11-01,30087.19,29750.78,30427.4
-Fungicidas,Fitoraz 76 Wp,500 gramos,3,2026-12-01,30134.97,29701.07,30575.22
-Fungicidas,Fitoraz 76 Wp,500 gramos,4,2027-01-01,30182.84,29651.1,30724.11
-Fungicidas,Fitoraz 76 Wp,500 gramos,5,2027-02-01,30230.77,29674.82,30797.14
-Fungicidas,Fitoraz 76 Wp,500 gramos,6,2027-03-01,30278.79,29619.61,30952.64
+Fungicidas,Fitoraz 76 Wp,500 gramos,3,2026-12-01,30134.97,29701.07,30575.21
+Fungicidas,Fitoraz 76 Wp,500 gramos,4,2027-01-01,30182.83,29651.09,30724.11
+Fungicidas,Fitoraz 76 Wp,500 gramos,5,2027-02-01,30230.77,29674.83,30797.13
+Fungicidas,Fitoraz 76 Wp,500 gramos,6,2027-03-01,30278.79,29619.61,30952.63
 Fungicidas,Mancozeb 80 Wp,1 kilogramo,1,2026-10-01,22016.67,21561.82,22481.11
 Fungicidas,Mancozeb 80 Wp,1 kilogramo,2,2026-11-01,22016.67,21368.72,22684.27
 Fungicidas,Mancozeb 80 Wp,1 kilogramo,3,2026-12-01,22016.67,21500.62,22545.11
@@ -344,19 +344,19 @@ Fungicidas,"Oxicloruro de Cobre 58,8% Wp",1 kilogramo,6,2027-03-01,15518.85,1472
 Fungicidas,Ridomil Gold MZ 68 Wp,375 gramos,1,2026-10-01,33273.24,33005.79,33542.85
 Fungicidas,Ridomil Gold MZ 68 Wp,375 gramos,2,2026-11-01,33422.52,33117.35,33730.5
 Fungicidas,Ridomil Gold MZ 68 Wp,375 gramos,3,2026-12-01,33572.47,33088.0,34064.03
-Fungicidas,Ridomil Gold MZ 68 Wp,375 gramos,4,2027-01-01,33723.09,33210.62,34243.47
+Fungicidas,Ridomil Gold MZ 68 Wp,375 gramos,4,2027-01-01,33723.09,33188.49,34266.3
 Fungicidas,Ridomil Gold MZ 68 Wp,375 gramos,5,2027-02-01,33874.39,33233.59,34527.55
 Fungicidas,Ridomil Gold MZ 68 Wp,375 gramos,6,2027-03-01,34026.37,33333.95,34733.17
 Fungicidas,Score 250 Ec,100 centímetros cúbicos,1,2026-10-01,27539.04,27099.09,27986.13
-Fungicidas,Score 250 Ec,100 centímetros cúbicos,2,2026-11-01,27517.73,27148.96,27891.51
+Fungicidas,Score 250 Ec,100 centímetros cúbicos,2,2026-11-01,27517.74,27148.97,27891.52
 Fungicidas,Score 250 Ec,100 centímetros cúbicos,3,2026-12-01,27496.45,26898.21,28107.99
-Fungicidas,Score 250 Ec,100 centímetros cúbicos,4,2027-01-01,27475.17,26796.94,28170.57
-Fungicidas,Score 250 Ec,100 centímetros cúbicos,5,2027-02-01,27453.92,26622.36,28311.44
-Fungicidas,Score 250 Ec,100 centímetros cúbicos,6,2027-03-01,27432.68,26446.09,28456.06
+Fungicidas,Score 250 Ec,100 centímetros cúbicos,4,2027-01-01,27475.18,26796.94,28170.57
+Fungicidas,Score 250 Ec,100 centímetros cúbicos,5,2027-02-01,27453.92,26622.36,28311.45
+Fungicidas,Score 250 Ec,100 centímetros cúbicos,6,2027-03-01,27432.68,26446.1,28456.07
 Fungicidas,Trivia Wp,400 gramos,1,2026-10-01,32780.29,32538.46,33023.92
 Fungicidas,Trivia Wp,400 gramos,2,2026-11-01,32938.28,32538.91,33342.55
 Fungicidas,Trivia Wp,400 gramos,3,2026-12-01,33097.03,32534.55,33669.23
-Fungicidas,Trivia Wp,400 gramos,4,2027-01-01,33256.54,32567.37,33960.3
+Fungicidas,Trivia Wp,400 gramos,4,2027-01-01,33256.54,32567.39,33960.28
 Fungicidas,Trivia Wp,400 gramos,5,2027-02-01,33416.83,32664.52,34186.46
 Fungicidas,Trivia Wp,400 gramos,6,2027-03-01,33577.88,32813.81,34359.75
 Granos y cereales,Arroz de primera,1 kilogramo,1,2026-11-01,3558.07,3516.26,3600.38
@@ -382,7 +382,7 @@ Granos y cereales,Garbanzo importado,1 kilogramo,2,2026-12-01,5520.98,5285.84,57
 Granos y cereales,Garbanzo importado,1 kilogramo,3,2027-01-01,5484.76,5166.11,5823.07
 Granos y cereales,Garbanzo importado,1 kilogramo,4,2027-02-01,5455.96,5130.29,5802.31
 Granos y cereales,Garbanzo importado,1 kilogramo,5,2027-03-01,5433.03,4987.75,5918.06
-Granos y cereales,Garbanzo importado,1 kilogramo,6,2027-04-01,5414.75,4973.86,5894.73
+Granos y cereales,Garbanzo importado,1 kilogramo,6,2027-04-01,5414.75,4973.85,5894.73
 Granos y cereales,Lenteja importada,1 kilogramo,1,2026-11-01,4026.58,3883.02,4175.45
 Granos y cereales,Lenteja importada,1 kilogramo,2,2026-12-01,3907.91,3685.2,4144.09
 Granos y cereales,Lenteja importada,1 kilogramo,3,2027-01-01,3815.5,3485.91,4176.25
@@ -459,7 +459,7 @@ Herbicidas,Roundup Activo,1 litro,1,2026-10-01,22736.37,22544.63,22929.74
 Herbicidas,Roundup Activo,1 litro,2,2026-11-01,22791.23,22515.62,23070.21
 Herbicidas,Roundup Activo,1 litro,3,2026-12-01,22840.28,22453.84,23233.38
 Herbicidas,Roundup Activo,1 litro,4,2027-01-01,22884.14,22454.72,23321.77
-Herbicidas,Roundup Activo,1 litro,5,2027-02-01,22923.33,22400.0,23458.89
+Herbicidas,Roundup Activo,1 litro,5,2027-02-01,22923.33,22399.99,23458.89
 Herbicidas,Roundup Activo,1 litro,6,2027-03-01,22958.35,22419.6,23510.05
 Herbicidas,Roundup Activo,4 litros,1,2026-10-01,85365.4,84140.73,86607.9
 Herbicidas,Roundup Activo,4 litros,2,2026-11-01,85365.4,83693.82,87070.36
@@ -491,12 +491,12 @@ Insecticidas,Engeo,1 litro,3,2026-12-01,200509.12,193530.18,207739.73
 Insecticidas,Engeo,1 litro,4,2027-01-01,200509.12,191180.16,210293.3
 Insecticidas,Engeo,1 litro,5,2027-02-01,200509.12,191830.01,209580.9
 Insecticidas,Engeo,1 litro,6,2027-03-01,200509.12,190098.28,211490.11
-Insecticidas,Engeo,100 centímetros cúbicos,1,2026-10-01,26890.52,26458.56,27329.53
+Insecticidas,Engeo,100 centímetros cúbicos,1,2026-10-01,26890.52,26458.55,27329.55
 Insecticidas,Engeo,100 centímetros cúbicos,2,2026-11-01,26959.53,26488.47,27438.98
 Insecticidas,Engeo,100 centímetros cúbicos,3,2026-12-01,27028.72,26101.55,27988.83
 Insecticidas,Engeo,100 centímetros cúbicos,4,2027-01-01,27098.09,25960.82,28285.18
 Insecticidas,Engeo,100 centímetros cúbicos,5,2027-02-01,27167.64,25855.15,28546.74
-Insecticidas,Engeo,100 centímetros cúbicos,6,2027-03-01,27237.36,25728.3,28834.92
+Insecticidas,Engeo,100 centímetros cúbicos,6,2027-03-01,27237.36,25728.3,28834.93
 Insecticidas,Engeo,250 centímetros cúbicos,1,2026-10-01,58264.0,57926.4,58603.57
 Insecticidas,Engeo,250 centímetros cúbicos,2,2026-11-01,58264.0,57829.35,58701.92
 Insecticidas,Engeo,250 centímetros cúbicos,3,2026-12-01,58264.0,57307.7,59236.25
@@ -519,13 +519,13 @@ Insecticidas,Karate Zeon,100 centímetros cúbicos,1,2026-10-01,18944.56,18746.7
 Insecticidas,Karate Zeon,100 centímetros cúbicos,2,2026-11-01,19013.45,18754.41,19276.07
 Insecticidas,Karate Zeon,100 centímetros cúbicos,3,2026-12-01,19082.59,18657.66,19517.2
 Insecticidas,Karate Zeon,100 centímetros cúbicos,4,2027-01-01,19151.99,18623.84,19695.12
-Insecticidas,Karate Zeon,100 centímetros cúbicos,5,2027-02-01,19221.63,18638.2,19823.33
-Insecticidas,Karate Zeon,100 centímetros cúbicos,6,2027-03-01,19291.53,18641.47,19964.27
+Insecticidas,Karate Zeon,100 centímetros cúbicos,5,2027-02-01,19221.64,18638.2,19823.34
+Insecticidas,Karate Zeon,100 centímetros cúbicos,6,2027-03-01,19291.54,18641.47,19964.28
 Insecticidas,Lannate Sl,1 litro,1,2026-10-01,52836.75,52133.63,53549.35
-Insecticidas,Lannate Sl,1 litro,2,2026-11-01,52991.78,51990.79,54012.04
+Insecticidas,Lannate Sl,1 litro,2,2026-11-01,52991.78,51990.77,54012.07
 Insecticidas,Lannate Sl,1 litro,3,2026-12-01,53147.27,51612.18,54728.01
-Insecticidas,Lannate Sl,1 litro,4,2027-01-01,53303.21,51509.23,55159.67
-Insecticidas,Lannate Sl,1 litro,5,2027-02-01,53459.61,51514.51,55478.15
+Insecticidas,Lannate Sl,1 litro,4,2027-01-01,53303.21,51509.24,55159.67
+Insecticidas,Lannate Sl,1 litro,5,2027-02-01,53459.61,51514.52,55478.15
 Insecticidas,Lannate Sl,1 litro,6,2027-03-01,53616.47,51283.0,56056.12
 Insecticidas,Malathion 57 Ec,1 litro,1,2026-10-01,41900.0,41375.65,42431.0
 Insecticidas,Malathion 57 Ec,1 litro,2,2026-11-01,41900.0,41311.8,42496.57
@@ -557,18 +557,18 @@ Lácteos y huevos,Leche en polvo,1 kilogramo,3,2027-01-01,48602.0,46807.0,50465.
 Lácteos y huevos,Leche en polvo,1 kilogramo,4,2027-02-01,48602.0,46134.57,51201.4
 Lácteos y huevos,Leche en polvo,1 kilogramo,5,2027-03-01,48602.0,45893.71,51470.11
 Lácteos y huevos,Leche en polvo,1 kilogramo,6,2027-04-01,48602.0,45628.82,51768.91
-Lácteos y huevos,Queso campesino,1 kilogramo,1,2026-11-01,22241.17,21481.81,23027.37
-Lácteos y huevos,Queso campesino,1 kilogramo,2,2026-12-01,22421.3,21376.71,23516.92
-Lácteos y huevos,Queso campesino,1 kilogramo,3,2027-01-01,22602.88,21590.49,23662.75
-Lácteos y huevos,Queso campesino,1 kilogramo,4,2027-02-01,22785.94,21529.43,24115.79
-Lácteos y huevos,Queso campesino,1 kilogramo,5,2027-03-01,22970.48,21876.84,24118.8
-Lácteos y huevos,Queso campesino,1 kilogramo,6,2027-04-01,23156.52,21884.73,24502.22
-Lácteos y huevos,Queso costeño,1 kilogramo,1,2026-11-01,24750.02,22887.79,26763.78
-Lácteos y huevos,Queso costeño,1 kilogramo,2,2026-12-01,24750.02,22318.65,27446.27
-Lácteos y huevos,Queso costeño,1 kilogramo,3,2027-01-01,24750.02,21152.36,28959.59
-Lácteos y huevos,Queso costeño,1 kilogramo,4,2027-02-01,24750.02,21594.79,28366.27
-Lácteos y huevos,Queso costeño,1 kilogramo,5,2027-03-01,24750.02,21150.07,28962.73
-Lácteos y huevos,Queso costeño,1 kilogramo,6,2027-04-01,24750.02,20829.87,29407.94
+Lácteos y huevos,Queso campesino,1 kilogramo,1,2026-11-01,22062.5,21402.22,22743.15
+Lácteos y huevos,Queso campesino,1 kilogramo,2,2026-12-01,22062.5,21380.5,22766.26
+Lácteos y huevos,Queso campesino,1 kilogramo,3,2027-01-01,22062.5,21396.49,22749.24
+Lácteos y huevos,Queso campesino,1 kilogramo,4,2027-02-01,22062.5,21181.67,22979.96
+Lácteos y huevos,Queso campesino,1 kilogramo,5,2027-03-01,22062.5,20758.85,23448.01
+Lácteos y huevos,Queso campesino,1 kilogramo,6,2027-04-01,22062.5,20369.29,23896.46
+Lácteos y huevos,Queso costeño,1 kilogramo,1,2026-11-01,24750.0,22887.75,26763.77
+Lácteos y huevos,Queso costeño,1 kilogramo,2,2026-12-01,24750.0,22318.77,27446.07
+Lácteos y huevos,Queso costeño,1 kilogramo,3,2027-01-01,24750.0,21152.28,28959.64
+Lácteos y huevos,Queso costeño,1 kilogramo,4,2027-02-01,24750.0,21594.74,28366.28
+Lácteos y huevos,Queso costeño,1 kilogramo,5,2027-03-01,24750.0,21149.99,28962.78
+Lácteos y huevos,Queso costeño,1 kilogramo,6,2027-04-01,24750.0,20829.6,29408.27
 Pescados,Bocachico importado congelado,1 kilogramo,1,2026-11-01,16594.0,16069.61,17135.5
 Pescados,Bocachico importado congelado,1 kilogramo,2,2026-12-01,16594.0,15950.98,17262.95
 Pescados,Bocachico importado congelado,1 kilogramo,3,2027-01-01,16594.0,15735.44,17499.41
@@ -585,7 +585,7 @@ Tubérculos y plátanos,Arracacha amarilla,1 kilogramo,1,2026-11-01,4001.79,3420
 Tubérculos y plátanos,Arracacha amarilla,1 kilogramo,2,2026-12-01,3958.82,3003.76,5217.54
 Tubérculos y plátanos,Arracacha amarilla,1 kilogramo,3,2027-01-01,3923.18,2629.62,5853.07
 Tubérculos y plátanos,Arracacha amarilla,1 kilogramo,4,2027-02-01,3893.58,2474.33,6126.88
-Tubérculos y plátanos,Arracacha amarilla,1 kilogramo,5,2027-03-01,3868.96,2117.97,7067.52
+Tubérculos y plátanos,Arracacha amarilla,1 kilogramo,5,2027-03-01,3868.96,2117.98,7067.52
 Tubérculos y plátanos,Arracacha amarilla,1 kilogramo,6,2027-04-01,3848.46,1962.29,7547.62
 Tubérculos y plátanos,Papa capira,1 kilogramo,1,2026-11-01,2974.0,2362.89,3743.16
 Tubérculos y plátanos,Papa capira,1 kilogramo,2,2026-12-01,2974.0,2049.53,4315.46
@@ -623,12 +623,12 @@ Tubérculos y plátanos,Yuca ICA,1 kilogramo,3,2027-01-01,2188.15,1765.03,2712.7
 Tubérculos y plátanos,Yuca ICA,1 kilogramo,4,2027-02-01,2182.84,1627.74,2927.23
 Tubérculos y plátanos,Yuca ICA,1 kilogramo,5,2027-03-01,2178.26,1559.31,3042.91
 Tubérculos y plátanos,Yuca ICA,1 kilogramo,6,2027-04-01,2174.33,1349.8,3502.53
-Tubérculos y plátanos,Yuca criolla,1 kilogramo,1,2026-11-01,2610.0,2341.39,2909.42
-Tubérculos y plátanos,Yuca criolla,1 kilogramo,2,2026-12-01,2610.0,2008.45,3391.71
-Tubérculos y plátanos,Yuca criolla,1 kilogramo,3,2027-01-01,2610.0,1774.99,3837.83
-Tubérculos y plátanos,Yuca criolla,1 kilogramo,4,2027-02-01,2610.0,1611.51,4227.16
-Tubérculos y plátanos,Yuca criolla,1 kilogramo,5,2027-03-01,2610.0,1536.5,4433.53
-Tubérculos y plátanos,Yuca criolla,1 kilogramo,6,2027-04-01,2610.0,1424.71,4781.4
+Tubérculos y plátanos,Yuca criolla,1 kilogramo,1,2026-11-01,2600.51,2268.26,2981.43
+Tubérculos y plátanos,Yuca criolla,1 kilogramo,2,2026-12-01,2589.97,2043.35,3282.84
+Tubérculos y plátanos,Yuca criolla,1 kilogramo,3,2027-01-01,2581.58,1932.64,3448.42
+Tubérculos y plátanos,Yuca criolla,1 kilogramo,4,2027-02-01,2574.88,1832.22,3618.57
+Tubérculos y plátanos,Yuca criolla,1 kilogramo,5,2027-03-01,2569.54,1517.93,4349.69
+Tubérculos y plátanos,Yuca criolla,1 kilogramo,6,2027-04-01,2565.27,1382.35,4760.46
 Verduras y hortalizas,Ahuyama,1 kilogramo,1,2026-11-01,1732.0,1437.72,2086.52
 Verduras y hortalizas,Ahuyama,1 kilogramo,2,2026-12-01,1732.0,1414.63,2120.57
 Verduras y hortalizas,Ahuyama,1 kilogramo,3,2027-01-01,1732.0,1226.25,2446.34

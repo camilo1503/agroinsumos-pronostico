@@ -113,6 +113,8 @@ def test_recomendacion_y_nutrientes():
     assert p.recomendar(0.1, 0, 90, 110, 100)[0] == "comprar"
     assert p.recomendar(0.9, -5, 85, 105, 100)[0] == "esperar"
     assert p.recomendar(0.5, 0, 90, 110, 100)[0] == "normal"
+    assert "3 meses" in p.recomendar(0.5, 10, 105, 120, 100, 3)[1]
+    assert p.plazo("Frutas") == 3 and p.plazo("Fertilizantes") == 6
     assert p.nutrientes("Urea 46%", "50 kilogramos") == pytest.approx(23)
     assert p.nutrientes("Fosfato Diamónico (DAP) 18-46-0", "50 kilogramos") == pytest.approx(32)
     assert p.nutrientes("Cal Dolomita", "50 kilogramos") is None
