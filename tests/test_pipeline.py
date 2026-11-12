@@ -79,3 +79,14 @@ def test_seleccion_conserva_persistencia_si_nadie_la_supera():
     filas = [{"modelo": k, "bloque": "validacion", "horizonte": 0, "mase": v}
              for k, v in {"naive": 1.0, "snaive": 2.0, "ets": 1.2, "sarima": 1.1, "ridge": 1.3}.items()]
     assert ev.seleccionar(pd.DataFrame(filas)) == ("naive", False)
+
+
+def test_mercado_tiene_series_positivas_y_fechas_unicas():
+    if not c.PINK_SHEET_XLSX.exists():
+        pytest.skip("Pink Sheet no descargado")
+    m = prepare.preparar_mercado()
+    assert list(m.columns) == ["trm", "urea_usd", "dap_usd", "kcl_usd", "tsp_usd"]
+    assert m.index.is_unique and m.index.is_monotonic_increasing
+    assert (m.dropna() > 0).all().all()
+    assert m["urea_usd"].notna().sum() > 60
+

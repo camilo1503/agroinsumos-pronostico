@@ -147,6 +147,15 @@ main > h1 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); }
 .lista-simple li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem 1rem; padding: .7rem 0; border-bottom: 1px solid var(--linea); }
 .lista-simple li:last-child { border-bottom: 0; }
 .acciones { display: flex; flex-wrap: wrap; gap: .5rem; }
+.senales { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem; margin: .8rem 0 1.2rem; }
+.senal { background: var(--superficie); border: 1px solid var(--linea); border-left: 5px solid var(--ocre); border-radius: 4px; padding: .9rem 1.1rem; }
+.senal.alza { border-left-color: var(--potasa); }
+.senal.baja { border-left-color: var(--ok); }
+.senal strong { display: block; font-size: 1.35rem; font-weight: 800; font-stretch: 112%; margin: .1rem 0 .35rem; }
+.senal p { margin: 0; }
+.celda-barra { width: 28%; min-width: 6rem; }
+.medidor { display: block; height: .7rem; background: var(--s-verde); border-radius: 2px; }
+tr.elegido .medidor { background: var(--s-azul); }
 
 @media (max-width: 800px) {
   .doc, .app, .acceso { grid-template-columns: minmax(0, 1fr); }

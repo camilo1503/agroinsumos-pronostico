@@ -1,6 +1,6 @@
 # Pronóstico de variaciones de precios de agroinsumos colombianos mediante CRISP-ML(Q)
 
-Proyecto de la materia Machine Learning. Pronostica a seis meses el índice nacional de precios de insumos agrícolas de la UPRA, lo compara con modelos de referencia y publica el resultado en una plataforma con inicio de sesión, proyección, presupuesto, alertas, reportes y monitoreo.
+Proyecto de la materia Machine Learning. Pronostica a seis meses el índice nacional de precios de insumos agrícolas de la UPRA, lo compara con modelos de referencia y publica el resultado en una plataforma con inicio de sesión, señal de compra, canasta de insumos en pesos, comparador regional, mercado internacional, proyección, presupuesto, alertas, reportes y monitoreo.
 
 ## Problema
 
@@ -56,6 +56,10 @@ Para ver el sitio localmente:
 ```bash
 python -m http.server 8000 --directory web
 ```
+
+## Publicar el sitio con ngrok
+
+Con ngrok instalado y autenticado, ejecute `iniciar_sitio.bat`. El sitio queda en <https://debrief-smartly-taco.ngrok-free.dev> mientras la ventana esté abierta. La base de datos y el inicio de sesión están en Supabase y funcionan siempre.
 
 ## Documentación
 

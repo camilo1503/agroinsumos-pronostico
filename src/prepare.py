@@ -108,6 +108,23 @@ def preparar_sipsa():
     return precios, contraste
 
 
+def preparar_mercado():
+    """TRM y precios internacionales de fertilizantes (Pink Sheet) para la vista de mercado."""
+    trm = pd.read_csv(c.TRM_CSV, parse_dates=["fecha"]).set_index("fecha")["trm"]
+    crudo = pd.read_excel(c.PINK_SHEET_XLSX, sheet_name="Monthly Prices", header=None)
+    nombres = crudo.iloc[4].astype(str).str.replace("*", "", regex=False).str.strip().str.lower()
+    columnas = {"urea_usd": "urea", "dap_usd": "dap", "kcl_usd": "potassium chloride", "tsp_usd": "tsp"}
+    posiciones = [nombres[nombres == v].index[0] for v in columnas.values()]
+    tabla = crudo.iloc[6:, [0] + posiciones].copy()
+    tabla.columns = ["periodo"] + list(columnas)
+    tabla["fecha"] = pd.to_datetime(tabla["periodo"].astype(str).str.replace("M", "-"),
+                                    format="%Y-%m", errors="coerce")
+    tabla = tabla.dropna(subset=["fecha"]).set_index("fecha")[list(columnas)]
+    tabla = tabla.apply(pd.to_numeric, errors="coerce")
+    mercado = pd.concat([trm.rename("trm"), tabla], axis=1).sort_index().loc["2018-01-01":]
+    return mercado.dropna(how="all").round(2)
+
+
 def correr():
     c.PROCESSED.mkdir(parents=True, exist_ok=True)
     c.REPORTES.mkdir(parents=True, exist_ok=True)
@@ -121,6 +138,7 @@ def correr():
     precios, contraste = preparar_sipsa()
     precios.to_csv(c.PROCESSED / "sipsa_precios.csv", index=False)
     contraste.round(3).to_csv(c.PROCESSED / "sipsa_contraste.csv")
+    preparar_mercado().to_csv(c.PROCESSED / "mercado_mensual.csv", index_label="fecha")
 
     mapa = {"Fertilizantes": "T_Fertilizantes", "Herbicidas": "T_Herbicidas",
             "Fungicidas": "T_Fungicidas", "Insecticidas": "T_Insecticidas"}

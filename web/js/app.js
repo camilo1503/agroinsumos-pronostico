@@ -225,11 +225,18 @@ async function datosReporte(tipo) {
     const l = await q(db.from("presupuesto").select("*").order("creado_en"));
     return l.map((p) => { const e = escenario(b, p); return { nombre: p.nombre, hoy: e.baseTotal, escenario_bajo: Math.round(e.bajo), escenario_central: Math.round(e.central), escenario_alto: Math.round(e.alto) }; });
   }
+  if (tipo === "canasta") {
+    const { perfil, filas } = await calcularCanasta();
+    return filas.filter((f) => f.sub).map((f) => ({ producto: f.it.producto, presentacion: f.it.presentacion, cantidad: f.it.cantidad,
+      departamento: f.esLocal ? perfil.departamento : "Nacional", precio_unitario: f.usado.precio, subtotal_hoy: Math.round(f.sub),
+      estimado_6_meses_bajo: Math.round(f.bajo), estimado_6_meses_central: Math.round(f.central), estimado_6_meses_alto: Math.round(f.alto),
+      departamento_mas_barato: f.barato?.departamento ?? "", precio_mas_barato: f.barato?.precio ?? "" }));
+  }
   const l = await q(db.from("alerta_evento").select("*").order("creado_en", { ascending: false }));
   return l.map((e) => ({ fecha: e.creado_en.slice(0, 10), mensaje: e.mensaje, variacion_pct: e.variacion_pct, leida: e.leida ? "sí" : "no" }));
 }
 
-const TITULOS = { proyeccion: "Proyección a seis meses", presupuesto: "Presupuesto", alertas: "Alertas activadas" };
+const TITULOS = { proyeccion: "Proyección a seis meses", canasta: "Canasta de insumos", presupuesto: "Presupuesto", alertas: "Alertas activadas" };
 
 async function reportes() {
   const b = await base();
@@ -361,7 +368,7 @@ async function monitoreo() {
     h("div", { class: "panel" }, h("h2", {}, "Pronósticos publicados y verificados"),
       publicados.length ? h("div", { class: "tabla-scroll" }, h("table", {},
         h("thead", {}, h("tr", {}, ["Mes", "Corte", "Estimado", "Observado", "Error", "Dentro del 80 %"].map((t) => h("th", {}, t)))),
-        h("tbody", {}, publicados.map((f) => h("tr", {}, h("td", {}, formatoMes(fechaUTC(f.fecha))), h("td", {}, formatoMes(fechaUTC(f.fecha_corte))), h("td", {}, numero(f.pronosticado)), h("td", {}, numero(f.observado)), h("td", {}, `${numero(f.error_pct)} %`), h("td", {}, f.dentro_80 ? "Sí" : "No")))))))
+        h("tbody", {}, publicados.map((f) => h("tr", {}, h("td", {}, formatoMes(fechaUTC(f.fecha))), h("td", {}, formatoMes(fechaUTC(f.fecha_corte))), h("td", {}, numero(f.pronosticado)), h("td", {}, numero(f.observado)), h("td", {}, `${numero(f.error_pct)} %`), h("td", {}, f.dentro_80 ? "Sí" : "No"))))))
         : h("p", {}, `Aún no hay meses por verificar: el primer pronóstico publicado cubre desde el mes siguiente a ${formatoMes(fechaUTC(b.corrida.fecha_corte))}. Se llenará cuando la UPRA publique ese dato y se ejecute el pipeline.`)),
   );
   grafica(g, {
@@ -373,14 +380,281 @@ async function monitoreo() {
   });
 }
 
+// ---------- Datos compartidos de las funciones para el productor ----------
+const SERIE_GRUPO = { Fertilizantes: "fertilizantes", Fungicidas: "plaguicidas", Herbicidas: "plaguicidas", Insecticidas: "plaguicidas" };
+const TIPOS = { productor: "Productor o productora", asociacion: "Asociación o cooperativa", almacen: "Almacén de insumos", asistente: "Asistente técnico", otro: "Otro" };
+
+async function leerPerfil() {
+  const p = (await q(db.from("perfil").select("*").limit(1)))[0];
+  return p ?? { tipo: "productor", departamento: "Nacional", nombre: "", cultivo: "", area_ha: null };
+}
+
+let cacheMercado = null;
+async function leerMercado() {
+  cacheMercado ??= await q(db.from("mercado_mensual").select("*").order("fecha"));
+  return cacheMercado;
+}
+
+// Lectura del pronóstico como señal de compra. Solo hay señal si todo el intervalo de 80 % queda a un lado del nivel actual.
+function senal(b, serie) {
+  const r = resumen(b, serie);
+  const v = (x) => (x / r.ultimo - 1) * 100;
+  const rango = `de ${pct(v(r.final.li80))} a ${pct(v(r.final.ls80))}`;
+  if (r.final.li80 > r.ultimo) return { tipo: "alza", titulo: "Señal de alza", texto: `Incluso el escenario bajo queda por encima del nivel actual (${rango} en seis meses). Considere adelantar las compras que ya tiene planeadas.` };
+  if (r.final.ls80 < r.ultimo) return { tipo: "baja", titulo: "Señal de baja", texto: `Incluso el escenario alto queda por debajo del nivel actual (${rango} en seis meses). Si su cultivo lo permite, considere aplazar o comprar por partes.` };
+  return { tipo: "neutra", titulo: "Sin señal clara", texto: `El rango estimado incluye subidas y bajadas (${rango} en seis meses; valor central ${pct(v(r.final.valor))}). Compre según su calendario de cultivo y, si puede, reparta la compra en varias fechas.` };
+}
+
+// Costo de importar urea en pesos: precio internacional por la TRM. Suele anticipar el precio en almacén.
+function presionExterna(mercado) {
+  const filas = mercado.filter((f) => f.urea_usd != null && f.trm != null);
+  if (filas.length < 4) return null;
+  const u = filas[filas.length - 1], a = filas[filas.length - 4];
+  const cambio = (u.urea_usd * u.trm) / (a.urea_usd * a.trm) - 1;
+  const lectura = cambio > 0.05 ? "presión al alza" : cambio < -0.05 ? "presión a la baja" : "sin presión marcada";
+  return { cambio: cambio * 100, lectura, fecha: u.fecha };
+}
+
+async function calcularCanasta() {
+  const [b, perfil, items] = await Promise.all([base(), leerPerfil(), q(db.from("canasta_item").select("*").order("creado_en"))]);
+  if (!items.length) return { perfil, filas: [], total: null };
+  const precios = await q(db.from("sipsa_precio_reciente").select("*").in("producto", [...new Set(items.map((i) => i.producto))]));
+  const filas = items.map((it) => {
+    const suyos = precios.filter((p) => p.grupo === it.grupo && p.producto === it.producto && p.presentacion === it.presentacion);
+    const local = suyos.find((p) => p.departamento === perfil.departamento);
+    const nacional = suyos.find((p) => p.departamento === "Nacional");
+    const usado = local ?? nacional;
+    const barato = suyos.filter((p) => p.departamento !== "Nacional").sort((x, y) => x.precio - y.precio)[0];
+    const r = resumen(b, SERIE_GRUPO[it.grupo]);
+    const factor = (campo) => r.final[campo] / r.ultimo;
+    const sub = usado ? usado.precio * it.cantidad : null;
+    return {
+      it, usado, esLocal: Boolean(local), nacional, barato, sub,
+      bajo: sub && sub * factor("li80"), central: sub && sub * factor("valor"), alto: sub && sub * factor("ls80"),
+    };
+  });
+  const suma = (k) => filas.reduce((a, f) => a + (f[k] ?? 0), 0);
+  return { perfil, filas, total: { hoy: suma("sub"), bajo: suma("bajo"), central: suma("central"), alto: suma("alto") } };
+}
+
+// ---------- Inicio ----------
+async function inicio() {
+  const [b, mercado, canasta] = await Promise.all([base(), leerMercado(), calcularCanasta()]);
+  const { count: sinLeer } = await db.from("alerta_evento").select("id", { count: "exact", head: true }).eq("leida", false);
+  const total = resumen(b, "total");
+  const presion = presionExterna(mercado);
+  const trm = mercado.filter((f) => f.trm != null).at(-1);
+  const tarjeta = (titulo, serie) => {
+    const s = senal(b, serie);
+    return h("div", { class: `senal ${s.tipo}` }, h("span", { class: "pequeno" }, titulo), h("strong", {}, s.titulo), h("p", {}, s.texto));
+  };
+  const saludo = canasta.perfil.nombre ? `Hola, ${canasta.perfil.nombre}` : "Resumen para decidir sus compras";
+
+  pagina(
+    h("h1", {}, saludo),
+    h("p", {}, `Datos oficiales hasta ${formatoMes(fechaUTC(b.corrida.fecha_corte))}. ${canasta.perfil.departamento === "Nacional" ? "Elija su departamento en Mi canasta para ver precios de su zona." : `Precios de referencia: ${canasta.perfil.departamento}.`}`),
+    h("div", { class: "cifras" },
+      h("div", { class: "cifra" }, h("span", {}, "Índice de insumos, último dato"), h("strong", {}, numero(total.ultimo))),
+      h("div", { class: "cifra" }, h("span", {}, "Variación estimada a 6 meses"), h("strong", {}, pct((total.final.valor / total.ultimo - 1) * 100))),
+      ...(presion ? [h("div", { class: "cifra" }, h("span", {}, "Urea importada en pesos, 3 meses"), h("strong", {}, pct(presion.cambio)))] : []),
+      ...(trm ? [h("div", { class: "cifra" }, h("span", {}, `Dólar (TRM), ${formatoMes(fechaUTC(trm.fecha))}`), h("strong", {}, pesos(trm.trm)))] : [])),
+    h("h2", {}, "¿Comprar ahora o esperar?"),
+    h("div", { class: "senales" }, tarjeta("Fertilizantes", "fertilizantes"), tarjeta("Plaguicidas", "plaguicidas")),
+    ...(presion ? [h("p", {}, `Mercado internacional: ${presion.lectura}. El costo de traer urea al país cambió ${pct(presion.cambio)} en tres meses; ese movimiento suele llegar al almacén con algunos meses de retraso. `, h("a", { href: "#mercado" }, "Ver mercado"))] : []),
+    h("p", { class: "pequeno" }, "La señal sale del intervalo de 80 % del pronóstico. En la prueba final el modelo no superó a la referencia de mantener el último valor: úsela como apoyo y confirme con cotizaciones."),
+    h("div", { class: "panel" }, h("h2", {}, "Mi canasta de insumos"),
+      canasta.total
+        ? h("div", {}, h("div", { class: "cifras" },
+            h("div", { class: "cifra" }, h("span", {}, "Costo hoy"), h("strong", {}, pesos(canasta.total.hoy))),
+            h("div", { class: "cifra" }, h("span", {}, "Estimado en 6 meses"), h("strong", {}, pesos(canasta.total.central))),
+            h("div", { class: "cifra" }, h("span", {}, "Rango"), h("strong", {}, `${pesos(canasta.total.bajo)} a ${pesos(canasta.total.alto)}`))),
+          h("a", { href: "#canasta" }, "Ver el detalle por producto"))
+        : h("p", {}, "Aún no tiene productos. ", h("a", { href: "#canasta" }, "Arme su canasta"), " para ver cuánto cuesta hoy en su departamento y cuánto podría costar en seis meses.")),
+    h("div", { class: "panel" }, h("h2", {}, "Alertas"),
+      h("p", {}, sinLeer ? `Tiene ${sinLeer} ${sinLeer === 1 ? "alerta sin leer" : "alertas sin leer"}. ` : "No tiene alertas sin leer. ", h("a", { href: "#alertas" }, sinLeer ? "Revisarlas" : "Crear o revisar reglas"))),
+  );
+}
+
+// ---------- Mi canasta ----------
+async function canasta() {
+  const [c0, catalogo, deps] = await Promise.all([
+    calcularCanasta(),
+    q(db.from("sipsa_catalogo").select("*").order("grupo").order("producto")),
+    q(db.from("departamento_lista").select("departamento").order("departamento")),
+  ]);
+  const { perfil, filas, total } = c0;
+  const msgPerfil = h("p", { class: "mensaje", role: "status" });
+  const msg = h("p", { class: "mensaje", role: "status" });
+
+  const formPerfil = h("form", {
+    onsubmit: async (e) => {
+      e.preventDefault();
+      const d = Object.fromEntries(new FormData(formPerfil));
+      d.area_ha = d.area_ha === "" ? null : d.area_ha;
+      d.actualizado_en = new Date().toISOString();
+      const { error } = await db.from("perfil").upsert({ ...d, user_id: session.user.id });
+      if (error) { msgPerfil.textContent = `No se guardó el perfil: ${error.message}`; msgPerfil.className = "mensaje error"; return; }
+      canasta();
+    },
+  },
+    h("div", { class: "fila-form" },
+      h("label", {}, "Nombre", h("input", { name: "nombre", maxlength: 80, value: perfil.nombre ?? "" })),
+      h("label", {}, "Soy", h("select", { name: "tipo" }, Object.entries(TIPOS).map(([k, v]) => h("option", { value: k, selected: k === perfil.tipo }, v)))),
+      h("label", {}, "Departamento", h("select", { name: "departamento" },
+        h("option", { value: "Nacional", selected: perfil.departamento === "Nacional" }, "Todo el país"),
+        deps.map((d) => h("option", { selected: d.departamento === perfil.departamento }, d.departamento)))),
+      h("label", {}, "Cultivo principal", h("input", { name: "cultivo", maxlength: 60, value: perfil.cultivo ?? "", placeholder: "Papa, arroz, café…" })),
+      h("label", {}, "Área (hectáreas)", h("input", { name: "area_ha", type: "number", min: 0, step: "0.1", value: perfil.area_ha ?? "" }))),
+    h("button", { class: "secundario" }, "Guardar perfil"), msgPerfil);
+
+  const grupos = [...new Set(catalogo.map((f) => f.grupo))];
+  const sGrupo = h("select", {}, grupos.map((g) => h("option", {}, g)));
+  const sProd = h("select", { name: "producto" });
+  const llenar = () => sProd.replaceChildren(...catalogo.filter((f) => f.grupo === sGrupo.value).map((f) =>
+    h("option", { value: JSON.stringify(f) }, `${f.producto} (${f.presentacion})`)));
+  sGrupo.addEventListener("change", llenar);
+  llenar();
+  const cantidad = h("input", { type: "number", min: "0.5", step: "0.5", value: 1, required: true });
+  const formItem = h("form", {
+    onsubmit: async (e) => {
+      e.preventDefault();
+      const { error } = await db.from("canasta_item").upsert(
+        { ...JSON.parse(sProd.value), cantidad: cantidad.value, user_id: session.user.id },
+        { onConflict: "user_id,grupo,producto,presentacion" });
+      if (error) { msg.textContent = `No se agregó el producto: ${error.message}`; msg.className = "mensaje error"; return; }
+      canasta();
+    },
+  },
+    h("div", { class: "fila-form" }, h("label", {}, "Grupo", sGrupo), h("label", {}, "Producto", sProd), h("label", {}, "Cantidad (unidades de esa presentación)", cantidad)),
+    h("button", {}, "Agregar a la canasta"), msg);
+
+  const ahorro = filas.reduce((a, f) => a + (f.barato && f.usado && f.barato.precio < f.usado.precio ? (f.usado.precio - f.barato.precio) * f.it.cantidad : 0), 0);
+  const cuerpo = filas.map((f) => h("tr", {},
+    h("td", {}, `${f.it.producto} (${f.it.presentacion})`),
+    h("td", {}, numero(f.it.cantidad, 1)),
+    h("td", {}, f.usado ? `${pesos(f.usado.precio)}${f.esLocal ? "" : " (nacional)"}` : "Sin precio reciente"),
+    h("td", {}, f.sub ? pesos(f.sub) : "—"),
+    h("td", {}, f.barato && f.usado ? `${f.barato.departamento}: ${pesos(f.barato.precio)} (${pct((f.barato.precio / f.usado.precio - 1) * 100)})` : "—"),
+    h("td", {}, f.sub ? `${pesos(f.central)} (${pesos(f.bajo)} a ${pesos(f.alto)})` : "—"),
+    h("td", {}, h("button", { class: "secundario", onclick: async () => { await db.from("canasta_item").delete().eq("id", f.it.id); canasta(); } }, "Quitar"))));
+
+  pagina(
+    h("h1", {}, "Mi canasta de insumos"),
+    h("p", {}, "Arme la lista de lo que compra para su cultivo. La plataforma la valora en pesos con el precio mediano de su departamento según SIPSA-I, le muestra dónde está más barato y cuánto podría costar en seis meses."),
+    h("div", { class: "panel" }, h("h2", {}, "Mi perfil"), formPerfil),
+    h("div", { class: "panel" }, h("h2", {}, "Agregar producto"), formItem),
+    h("div", { class: "panel" }, h("h2", {}, `Costo de la canasta en ${perfil.departamento === "Nacional" ? "el país" : perfil.departamento}`),
+      total
+        ? h("div", {},
+            h("div", { class: "cifras" },
+              h("div", { class: "cifra" }, h("span", {}, "Costo hoy"), h("strong", {}, pesos(total.hoy))),
+              h("div", { class: "cifra" }, h("span", {}, "Estimado en 6 meses"), h("strong", {}, `${pesos(total.central)} (${pct((total.central / total.hoy - 1) * 100)})`)),
+              ...(perfil.area_ha > 0 ? [h("div", { class: "cifra" }, h("span", {}, "Costo hoy por hectárea"), h("strong", {}, pesos(total.hoy / perfil.area_ha)))] : []),
+              ...(ahorro > 0 ? [h("div", { class: "cifra" }, h("span", {}, "Diferencia frente al departamento más barato"), h("strong", {}, pesos(ahorro)))] : [])),
+            h("div", { class: "tabla-scroll" }, h("table", {},
+              h("thead", {}, h("tr", {}, ["Producto", "Cantidad", "Precio unitario", "Subtotal hoy", "Departamento más barato", "Estimado en 6 meses (rango)", ""].map((t) => h("th", {}, t)))),
+              h("tbody", {}, cuerpo))))
+        : h("p", {}, "Aún no hay productos. Agregue el primero con el formulario de arriba.")),
+    h("p", { class: "pequeno" }, "Precio unitario: mediana de los precios reportados al DANE en los últimos tres meses; si su departamento no tiene dato se usa el nacional. La estimación a seis meses aplica la variación del subíndice de fertilizantes o de plaguicidas, no un pronóstico por producto. El departamento más barato no incluye transporte."),
+  );
+}
+
+// ---------- Comparador regional ----------
+async function regional() {
+  const [catalogo, perfil] = await Promise.all([q(db.from("sipsa_catalogo").select("*").order("grupo").order("producto")), leerPerfil()]);
+  const grupos = [...new Set(catalogo.map((f) => f.grupo))];
+  const sGrupo = h("select", {}, grupos.map((g) => h("option", {}, g)));
+  const sProd = h("select");
+  const salida = h("div");
+  const llenar = () => sProd.replaceChildren(...catalogo.filter((f) => f.grupo === sGrupo.value).map((f) =>
+    h("option", { value: JSON.stringify(f) }, `${f.producto} (${f.presentacion})`)));
+
+  async function dibujar() {
+    const filas = await q(db.from("sipsa_precio_reciente").select("*").match(JSON.parse(sProd.value)).order("precio"));
+    const nacional = filas.find((f) => f.departamento === "Nacional");
+    const deps = filas.filter((f) => f.departamento !== "Nacional");
+    if (!deps.length || !nacional) { salida.replaceChildren(h("p", {}, "Este producto no tiene precios recientes por departamento.")); return; }
+    const max = Math.max(...deps.map((f) => +f.precio));
+    const mio = deps.find((f) => f.departamento === perfil.departamento);
+    salida.replaceChildren(
+      h("div", { class: "cifras" },
+        h("div", { class: "cifra" }, h("span", {}, "Mediana nacional"), h("strong", {}, pesos(nacional.precio))),
+        h("div", { class: "cifra" }, h("span", {}, `Más barato: ${deps[0].departamento}`), h("strong", {}, pesos(deps[0].precio))),
+        h("div", { class: "cifra" }, h("span", {}, `Más caro: ${deps.at(-1).departamento}`), h("strong", {}, pesos(deps.at(-1).precio))),
+        h("div", { class: "cifra" }, h("span", {}, "Brecha entre extremos"), h("strong", {}, pct((deps.at(-1).precio / deps[0].precio - 1) * 100))),
+        ...(mio ? [h("div", { class: "cifra" }, h("span", {}, `${mio.departamento} frente al país`), h("strong", {}, pct((mio.precio / nacional.precio - 1) * 100)))] : [])),
+      h("div", { class: "panel" }, h("div", { class: "tabla-scroll" }, h("table", { class: "ranking" },
+        h("thead", {}, h("tr", {}, ["Departamento", "Precio mediano", "", "Frente al país", "Mes del dato", "Registros"].map((t) => h("th", {}, t)))),
+        h("tbody", {}, deps.map((f) => h("tr", { class: f.departamento === perfil.departamento ? "elegido" : "" },
+          h("td", {}, f.departamento), h("td", {}, pesos(f.precio)),
+          h("td", { class: "celda-barra" }, h("span", { class: "medidor", style: `width:${Math.round(f.precio / max * 100)}%` })),
+          h("td", {}, pct((f.precio / nacional.precio - 1) * 100)),
+          h("td", {}, formatoMes(fechaUTC(f.fecha))), h("td", {}, String(f.n_registros)))))))));
+  }
+  sGrupo.addEventListener("change", () => { llenar(); dibujar(); });
+  sProd.addEventListener("change", dibujar);
+  llenar();
+  pagina(
+    h("h1", {}, "Comparador regional"),
+    h("p", {}, "El mismo producto no cuesta igual en todo el país. Compare el precio mediano por departamento antes de cotizar o de organizar una compra conjunta."),
+    h("div", { class: "filtros" }, h("label", {}, "Grupo", sGrupo), h("label", {}, "Producto", sProd)),
+    salida,
+    h("p", { class: "pequeno" }, "Mediana de los precios reportados al DANE (SIPSA-I) en los últimos tres meses. Pocos registros hacen el dato menos confiable. No incluye transporte ni descuentos por volumen."),
+  );
+  await dibujar();
+}
+
+// ---------- Mercado internacional ----------
+async function mercado() {
+  const c = colores();
+  const [m, urea] = await Promise.all([
+    leerMercado(),
+    q(db.from("sipsa_precio").select("fecha,precio").match({ grupo: "Fertilizantes", producto: "Urea 46%", presentacion: "50 kilogramos", departamento: "Nacional" }).order("fecha")),
+  ]);
+  const serie = (k) => m.filter((f) => f[k] != null).map((f) => ({ x: fechaUTC(f.fecha), y: +f[k] }));
+  const cifra = (nombre, k, fmt) => {
+    const s = m.filter((f) => f[k] != null), u = s.at(-1), a = s.at(-13);
+    return h("div", { class: "cifra" }, h("span", {}, `${nombre}, ${formatoMes(fechaUTC(u.fecha))}`), h("strong", {}, fmt(u[k])),
+      a ? h("span", {}, `${pct((u[k] / a[k] - 1) * 100)} en doce meses`) : "");
+  };
+  const usd = (v) => `US$ ${numero(v, 0)}/t`;
+  const g1 = h("div"), g2 = h("div"), g3 = h("div");
+  const bulto = m.filter((f) => f.urea_usd != null && f.trm != null).map((f) => ({ x: fechaUTC(f.fecha), y: f.urea_usd * f.trm / 20 }));
+  const presion = presionExterna(m);
+
+  pagina(
+    h("h1", {}, "Mercado internacional"),
+    h("p", {}, "Colombia importa la mayor parte de sus fertilizantes, así que el precio en el almacén depende del precio internacional y del dólar. Estas series ayudan a anticipar hacia dónde se mueve el costo."),
+    h("div", { class: "cifras" }, cifra("Urea", "urea_usd", usd), cifra("DAP", "dap_usd", usd), cifra("Cloruro de potasio", "kcl_usd", usd), cifra("Dólar (TRM)", "trm", pesos)),
+    ...(presion ? [h("div", { class: "veredicto" }, h("p", {}, `Lectura: ${presion.lectura}. El costo de importar urea, en pesos, cambió ${pct(presion.cambio)} en los últimos tres meses.`))] : []),
+    h("div", { class: "panel" }, h("h2", {}, "Urea: costo de importación frente al precio en almacén"), g1,
+      h("p", { class: "pequeno" }, "Pesos por bulto de 50 kg. El costo de importación es el precio internacional por la TRM, sin fletes, aranceles ni margen; por eso queda por debajo del precio al productor. Lo útil es la dirección: los giros del costo de importación suelen verse después en el almacén.")),
+    h("div", { class: "panel" }, h("h2", {}, "Precios internacionales de fertilizantes"), g2,
+      h("p", { class: "pequeno" }, "Dólares por tonelada métrica. Fuente: Banco Mundial, Pink Sheet.")),
+    h("div", { class: "panel" }, h("h2", {}, "Tasa de cambio"), g3,
+      h("p", { class: "pequeno" }, "Promedio mensual de la TRM, pesos por dólar. Fuente: Superintendencia Financiera y Banco de la República.")),
+  );
+  grafica(g1, { series: [
+    { nombre: "Precio mediano en almacén (SIPSA-I)", color: c.pino, puntos: urea.map((f) => ({ x: fechaUTC(f.fecha), y: +f.precio })) },
+    { nombre: "Costo de importación (Pink Sheet × TRM)", color: c.fosfato, punteada: true, puntos: bulto },
+  ], alto: 300, decimales: 0, descripcion: "Precio de la urea en almacén frente a su costo de importación en pesos por bulto" });
+  grafica(g2, { series: [
+    { nombre: "Urea", color: c.pino, puntos: serie("urea_usd") },
+    { nombre: "DAP", color: c.fosfato, puntos: serie("dap_usd") },
+    { nombre: "Cloruro de potasio", color: c.potasa, puntos: serie("kcl_usd") },
+  ], alto: 300, decimales: 0, descripcion: "Precios internacionales de urea, DAP y cloruro de potasio" });
+  grafica(g3, { series: [{ nombre: "TRM", color: c.pino, puntos: serie("trm") }], alto: 260, decimales: 0, descripcion: "Tasa representativa del mercado mensual" });
+}
+
 // ---------- Navegacion ----------
-const RUTAS = { proyeccion, presupuesto, alertas, reportes, precios, monitoreo };
+const RUTAS = { inicio, proyeccion, canasta, regional, mercado, presupuesto, alertas, reportes, precios, monitoreo };
+const NOMBRES = { inicio: "Inicio", proyeccion: "Proyección", canasta: "Mi canasta", regional: "Comparador regional", mercado: "Mercado", presupuesto: "Presupuesto", alertas: "Alertas", reportes: "Reportes", precios: "Precios SIPSA", monitoreo: "Monitoreo" };
 async function navegar() {
-  const ruta = RUTAS[location.hash.slice(1)] ? location.hash.slice(1) : "proyeccion";
+  const ruta = RUTAS[location.hash.slice(1)] ? location.hash.slice(1) : "inicio";
   document.querySelectorAll(".riel nav a").forEach((a) => {
     if (a.getAttribute("href") === `#${ruta}`) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
   });
-  document.title = `${ruta[0].toUpperCase()}${ruta.slice(1)} | Agroinsumos`;
+  document.title = `${NOMBRES[ruta]} | Agroinsumos`;
   try { await RUTAS[ruta](); } catch (e) { falla(e); }
 }
 addEventListener("hashchange", navegar);

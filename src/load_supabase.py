@@ -81,6 +81,9 @@ def cargar(incluir_sipsa=True):
     bt.insert(0, "corrida_id", cid)
     cli.upsert("backtest_modelo", _registros(bt), "corrida_id,modelo,origen,horizonte")
 
+    mer = pd.read_csv(c.PROCESSED / "mercado_mensual.csv")
+    cli.upsert("mercado_mensual", _registros(mer), "fecha")
+
     if incluir_sipsa:
         pr = pd.read_csv(c.PROCESSED / "sipsa_precios.csv")
         cli.upsert("sipsa_precio", _registros(pr), "grupo,producto,presentacion,departamento,fecha")

@@ -20,6 +20,13 @@
 | `urea_usd` | Precio internacional de la urea, Pink Sheet | USD por tonelada métrica |
 | `dap_usd` | Precio internacional del DAP, Pink Sheet | USD por tonelada métrica |
 
+### `data/processed/mercado_mensual.csv`
+
+| Campo | Descripción | Unidad |
+|---|---|---|
+| `trm` | Promedio mensual de la TRM | COP por USD |
+| `urea_usd`, `dap_usd`, `kcl_usd`, `tsp_usd` | Precio internacional de urea, DAP, cloruro de potasio y TSP, Pink Sheet | USD por tonelada métrica |
+
 ### `data/processed/sipsa_precios.csv`
 
 | Campo | Descripción |
@@ -45,6 +52,11 @@
 | `pronostico` | Estimación e intervalos de 80 % y 95 % por serie | Lectura con sesión |
 | `backtest_modelo` | Predicciones históricas por origen y horizonte | Lectura con sesión |
 | `sipsa_precio`, `sipsa_contraste` | Precios resumidos y contraste | Lectura con sesión |
+| `mercado_mensual` | TRM y precios internacionales de fertilizantes | Lectura con sesión |
+| `sipsa_precio_reciente` | Último precio por producto y departamento en los tres meses más recientes | Lectura con sesión |
+| `departamento_lista` | Departamentos con precios | Lectura con sesión |
+| `perfil` | Nombre, tipo de usuario, departamento, cultivo y área de cada persona | Solo su registro |
+| `canasta_item` | Productos y cantidades de la lista de compra | Solo sus registros |
 | `presupuesto` | Gastos que registra cada persona | Solo sus registros |
 | `regla_alerta` | Reglas de alerta personales | Solo sus registros |
 | `alerta_evento` | Alertas activadas | Lectura y marcado de sus registros |
