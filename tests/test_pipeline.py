@@ -118,3 +118,22 @@ def test_recomendacion_y_nutrientes():
     assert p.nutrientes("Cal Dolomita", "50 kilogramos") is None
     assert p.nutrientes("Nutrimins", "1 litro") is None
 
+
+def test_alimentos_resume_por_departamento_y_filtra_la_canasta():
+    from src import alimentos as a
+    crudo = pd.DataFrame({
+        "fecha": ["2026-01-01"] * 5,
+        "grupo": ["TUBERCULOS, RAICES Y PLATANOS"] * 3 + ["LÁCTEOS Y HUEVOS", "FRUTAS"],
+        "producto": ["Papa única", "Papa única", "Papa única", "Huevo rojo AA", "Kiwi"],
+        "mercado": ["Bogotá, D.C., Corabastos", "Tunja, Complejo de Servicios del Sur", "Sogamoso (Boyacá)", "Cali, Cavasa", "Cali, Cavasa"],
+        "precio": [1000, 2000, 3000, 500, 9000],
+    })
+    fuentes = {"Bogotá, D.C., Corabastos": "Bogotá, D.C.", "Tunja, Complejo de Servicios del Sur": "Boyacá", "Cali, Cavasa": "Valle del Cauca"}
+    r = a.resumir(crudo, fuentes)
+    assert "Kiwi" not in set(r["producto"])
+    papa = r[r["producto"] == "Papa única"].set_index("departamento")
+    assert papa.loc["Nacional", "precio"] == 2000 and papa.loc["Nacional", "n_registros"] == 3
+    assert papa.loc["Boyacá", "precio"] == 2500     # Tunja por la tabla de fuentes y Sogamoso por el paréntesis
+    assert set(papa["grupo"]) == {"Tubérculos y plátanos"}
+    assert r[r["producto"] == "Huevo rojo AA"]["presentacion"].iloc[0] == "1 unidad"
+

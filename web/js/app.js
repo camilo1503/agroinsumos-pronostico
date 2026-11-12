@@ -281,15 +281,14 @@ async function reportes() {
 async function precios() {
   const c = colores();
   const [catalogo, productos] = await Promise.all([q(db.from("sipsa_catalogo").select("*").order("grupo").order("producto")), leerProductos()]);
-  const grupos = [...new Set(catalogo.map((f) => f.grupo))];
-  const sGrupo = h("select", {}, grupos.map((g) => h("option", {}, g)));
   const sProd = h("select"), sDep = h("select");
+  const { sGrupo, nodo: tipos } = selectorGrupo(ordenarGrupos(new Set(catalogo.map((f) => f.grupo))), () => { llenarProductos(); refrescar(); contraste(); });
   const g1 = h("div"), g2 = h("div"), cifras = h("div", { class: "cifras" });
 
   const clave = () => JSON.parse(sProd.value);
   function llenarProductos() {
     sProd.replaceChildren(...catalogo.filter((f) => f.grupo === sGrupo.value).map((f) =>
-      h("option", { value: JSON.stringify(f) }, `${f.producto} (${f.presentacion})`)));
+      h("option", { value: JSON.stringify(f) }, nombreProd(f))));
   }
   async function llenarDepartamentos() {
     const k = clave();
@@ -318,12 +317,13 @@ async function precios() {
     grafica(g1, { series, bandas, alto: 280, decimales: 0, descripcion: `Precio mediano de ${clave().producto} en ${sDep.value}` });
   }
   const refrescar = async () => { await llenarDepartamentos(); await dibujar(); };
-  sGrupo.addEventListener("change", () => { llenarProductos(); refrescar(); });
   sProd.addEventListener("change", refrescar);
   sDep.addEventListener("change", dibujar);
 
   async function contraste() {
     const col = { Fertilizantes: "fertilizantes", Herbicidas: "herbicidas", Fungicidas: "fungicidas", Insecticidas: "insecticidas" }[sGrupo.value];
+    panelContraste.hidden = !col;
+    if (!col) return;
     const [sip, b] = [await q(db.from("sipsa_contraste").select("fecha,valor").eq("grupo", sGrupo.value).order("fecha")), await base()];
     const upra = b.indice.filter((f) => f[col] != null);
     const inicio = upra.find((f) => sip.some((s) => s.fecha === f.fecha));
@@ -336,17 +336,18 @@ async function precios() {
       alto: 280, descripcion: "Comparación del subíndice UPRA con precios observados de SIPSA-I",
     });
   }
-  sGrupo.addEventListener("change", contraste);
 
+  const panelContraste = h("div", { class: "panel" }, h("h2", {}, "Índice frente a precios observados"), g2,
+    h("p", { class: "pequeno" }, "Ambas series parten de 100 en su primer mes común, para comparar su evolución y no su nivel."));
   llenarProductos();
   pagina(
-    h("h1", {}, "Precios SIPSA"),
-    h("p", {}, "Precios observados por el DANE para los productos con mejor cobertura. Sirven para contrastar la tendencia del índice; no representan a todos los establecimientos del país."),
+    h("h1", {}, "Cómo ha cambiado el precio"),
+    h("p", {}, "Elija un producto para ver cómo ha subido o bajado su precio desde 2018 y lo que se espera para los próximos seis meses."),
+    tipos,
     h("div", { class: "filtros" }, h("label", {}, "Grupo", sGrupo), h("label", {}, "Producto", sProd), h("label", {}, "Departamento", sDep)),
     cifras,
     h("div", { class: "panel" }, g1),
-    h("div", { class: "panel" }, h("h2", {}, "Índice frente a precios observados"), g2,
-      h("p", { class: "pequeno" }, "Ambas series parten de 100 en su primer mes común, para comparar su evolución y no su nivel.")),
+    panelContraste,
   );
   await refrescar();
   await contraste();
@@ -435,9 +436,9 @@ async function calcularCanasta() {
     const nacional = suyos.find((p) => p.departamento === "Nacional");
     const usado = local ?? nacional;
     const barato = suyos.filter((p) => p.departamento !== "Nacional").sort((x, y) => x.precio - y.precio)[0];
-    const r = resumen(b, SERIE_GRUPO[it.grupo]);
+    const r = SERIE_GRUPO[it.grupo] ? resumen(b, SERIE_GRUPO[it.grupo]) : null;
     const pp = productos.get(claveProd(it)), f6 = pp?.pron.at(-1);
-    const factor = (campo) => (f6 ? f6[campo] / pp.precio : r.final[campo] / r.ultimo);
+    const factor = (campo) => (f6 ? f6[campo] / pp.precio : r ? r.final[campo] / r.ultimo : 1);
     const sub = usado ? usado.precio * it.cantidad : null;
     return {
       it, usado, esLocal: Boolean(local), nacional, barato, sub, pp,
@@ -449,9 +450,31 @@ async function calcularCanasta() {
 }
 
 // ---------- Pronóstico por producto y recomendación de compra ----------
+const INSUMOS = ["Fertilizantes", "Fungicidas", "Herbicidas", "Insecticidas"];
+const ORDEN_GRUPOS = ["Tubérculos y plátanos", "Verduras y hortalizas", "Frutas", "Granos y cereales", "Carnes", "Lácteos y huevos", "Pescados", "Abarrotes", ...INSUMOS];
+const esInsumo = (g) => INSUMOS.includes(g);
+const ordenarGrupos = (gs) => [...gs].sort((x, y) => ORDEN_GRUPOS.indexOf(x) - ORDEN_GRUPOS.indexOf(y));
+const unidad = (p) => ({ "1 kilogramo": "por kilo", "1 unidad": "por unidad", "1 litro": "por litro" }[p] ?? `por ${p}`);
+const nombreProd = (r) => (esInsumo(r.grupo) ? `${r.producto} (${r.presentacion})` : r.producto);
+const sinTildes = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 const claveProd = (f) => `${f.grupo}|${f.producto}|${f.presentacion}`;
-const RECOMENDACION = { comprar: "Comprar ahora", esperar: "Conviene esperar", normal: "Precio normal" };
+const RECOMENDACION = { comprar: "Buen momento para comprar", esperar: "Mejor esperar", normal: "Precio normal" };
 const ORDEN_REC = { comprar: 0, normal: 1, esperar: 2 };
+let tipoActual = "alimentos";
+
+// Dos botones grandes (alimentos o insumos del campo) y la lista de grupos del tipo elegido.
+function selectorGrupo(grupos, alCambiar) {
+  const sGrupo = h("select");
+  const botones = [["alimentos", "🥔 Alimentos"], ["insumos", "🌱 Insumos del campo"]].map(([k, t]) =>
+    h("button", { type: "button", class: "opcion", "data-tipo": k, onclick: () => { tipoActual = k; llenar(); alCambiar(); } }, t));
+  function llenar() {
+    sGrupo.replaceChildren(...grupos.filter((g) => esInsumo(g) === (tipoActual === "insumos")).map((g) => h("option", {}, g)));
+    botones.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tipo === tipoActual)));
+  }
+  sGrupo.addEventListener("change", alCambiar);
+  llenar();
+  return { sGrupo, nodo: h("div", { class: "tipos", role: "group", "aria-label": "Tipo de producto" }, botones) };
+}
 
 let cacheProductos = null;
 async function leerProductos() {
@@ -471,114 +494,136 @@ function etiqueta(r) {
   return h("span", { class: `rec ${r.recomendacion}` }, RECOMENDACION[r.recomendacion]);
 }
 
+function medidor(r) {
+  return h("div", { class: "posicion-caja", title: `En dos años: mínimo ${pesos(r.minimo_24m)}, máximo ${pesos(r.maximo_24m)}` },
+    h("span", { class: "posicion" }, h("i", { style: `left:${Math.round(r.posicion_24m * 100)}%` })),
+    h("div", { class: "posicion-texto" }, h("span", {}, "Barato"), h("span", {}, "Normal"), h("span", {}, "Caro")));
+}
+
+// Tarjeta de un producto: precio de hoy, qué tan caro está, qué se espera y por qué.
+function tarjetaProducto(r, local, enDep, conBoton = true) {
+  const f = r.pron.at(-1);
+  const boton = h("button", { type: "button", class: "secundario", onclick: async () => {
+    boton.disabled = true;
+    const { error } = await db.from("canasta_item").upsert(
+      { grupo: r.grupo, producto: r.producto, presentacion: r.presentacion, cantidad: 1, user_id: session.user.id },
+      { onConflict: "user_id,grupo,producto,presentacion", ignoreDuplicates: true });
+    boton.textContent = error ? "No se pudo agregar" : "✓ Está en mi mercado";
+  } }, "＋ Agregar a mi mercado");
+  return h("article", { class: `tarjeta ${r.recomendacion}` },
+    h("h3", {}, nombreProd(r)),
+    etiqueta(r),
+    h("p", { class: "precio" }, h("strong", {}, pesos(local ? local.precio : r.precio)), ` ${unidad(r.presentacion)}`,
+      enDep && !local ? h("span", { class: "pequeno" }, " (precio del país)") : ""),
+    medidor(r),
+    h("p", {}, +r.var_6m_pct === 0
+      ? `En 6 meses: parecido a hoy (entre ${pesos(f.li80)} y ${pesos(f.ls80)}).`
+      : `En 6 meses: cerca de ${pesos(f.valor)} (entre ${pesos(f.li80)} y ${pesos(f.ls80)}).`),
+    h("p", { class: "pequeno" }, r.motivo),
+    conBoton ? boton : "");
+}
+
 async function comprar() {
   const [productos, perfil] = await Promise.all([leerProductos(), leerPerfil()]);
   const todos = [...productos.values()];
-  if (!todos.length) { pagina(h("h1", {}, "Qué comprar hoy"), h("p", {}, "Todavía no hay pronósticos por producto publicados.")); return; }
-  const grupos = [...new Set(todos.map((r) => r.grupo))].sort();
-  const sGrupo = h("select", {}, grupos.map((g) => h("option", { selected: g === "Fertilizantes" }, g)));
-  const salida = h("div");
+  if (!todos.length) { pagina(h("h1", {}, "Qué comprar hoy"), h("p", {}, "Todavía no hay recomendaciones publicadas.")); return; }
   const enDep = perfil.departamento !== "Nacional";
+  const locales = enDep ? await q(db.from("sipsa_precio_reciente").select("grupo,producto,presentacion,precio").eq("departamento", perfil.departamento)) : [];
+  const local = new Map(locales.map((l) => [claveProd(l), l]));
+  const salida = h("div");
+  const buscar = h("input", { type: "search", placeholder: "Escriba un producto: papa, arroz, huevo, urea…" });
+  let filtro = "todos";
+  const chips = [["todos", "Todos"], ["comprar", "Buen momento"], ["normal", "Precio normal"], ["esperar", "Mejor esperar"]].map(([k, t]) =>
+    h("button", { type: "button", class: "chip", "data-filtro": k, onclick: () => { filtro = k; dibujar(); } }, t));
+  const { sGrupo, nodo: tipos } = selectorGrupo(ordenarGrupos(new Set(todos.map((r) => r.grupo))), () => dibujar());
 
-  async function dibujar() {
-    const lista = todos.filter((r) => r.grupo === sGrupo.value)
+  function dibujar() {
+    const texto = sinTildes(buscar.value.trim());
+    const delTipo = todos.filter((r) => esInsumo(r.grupo) === (tipoActual === "insumos"));
+    const base0 = texto ? delTipo.filter((r) => sinTildes(r.producto).includes(texto)) : delTipo.filter((r) => r.grupo === sGrupo.value);
+    const lista = base0.filter((r) => filtro === "todos" || r.recomendacion === filtro)
       .sort((x, y) => ORDEN_REC[x.recomendacion] - ORDEN_REC[y.recomendacion] || x.posicion_24m - y.posicion_24m);
-    const locales = enDep
-      ? await q(db.from("sipsa_precio_reciente").select("producto,presentacion,precio").match({ grupo: sGrupo.value, departamento: perfil.departamento }))
-      : [];
-    const local = (r) => locales.find((l) => l.producto === r.producto && l.presentacion === r.presentacion);
-    const cuenta = (c) => lista.filter((r) => r.recomendacion === c).length;
-    const nutri = lista.filter((r) => r.precio_kg_nutriente != null).sort((x, y) => x.precio_kg_nutriente - y.precio_kg_nutriente);
+    chips.forEach((c) => {
+      const k = c.dataset.filtro, n = k === "todos" ? base0.length : base0.filter((r) => r.recomendacion === k).length;
+      c.setAttribute("aria-pressed", String(k === filtro));
+      c.textContent = `${c.textContent.replace(/ \(\d+\)$/, "")} (${n})`;
+    });
+    const nutri = !texto && sGrupo.value === "Fertilizantes"
+      ? delTipo.filter((r) => r.precio_kg_nutriente != null).sort((x, y) => x.precio_kg_nutriente - y.precio_kg_nutriente) : [];
     const maxNutri = Math.max(...nutri.map((r) => +r.precio_kg_nutriente), 1);
-
     salida.replaceChildren(
-      h("div", { class: "cifras" },
-        h("div", { class: "cifra" }, h("span", {}, "Para comprar ahora"), h("strong", {}, String(cuenta("comprar")))),
-        h("div", { class: "cifra" }, h("span", {}, "Precio normal"), h("strong", {}, String(cuenta("normal")))),
-        h("div", { class: "cifra" }, h("span", {}, "Conviene esperar"), h("strong", {}, String(cuenta("esperar")))),
-        h("div", { class: "cifra" }, h("span", {}, "Precios hasta"), h("strong", {}, formatoMes(fechaUTC(lista[0].fecha_precio))))),
-      h("div", { class: "panel" }, h("h2", {}, `Recomendación por producto: ${sGrupo.value.toLowerCase()}`),
+      lista.length
+        ? h("div", { class: "tarjetas" }, lista.map((r) => tarjetaProducto(r, local.get(claveProd(r)), enDep)))
+        : h("p", {}, texto ? `No encontramos «${buscar.value.trim()}» en ${tipoActual === "insumos" ? "insumos" : "alimentos"}. Pruebe con otra palabra o cambie de tipo arriba.` : "No hay productos con esa recomendación en este grupo."),
+      ...(nutri.length ? [h("div", { class: "panel" }, h("h2", {}, "¿Cuál abono rinde más por su plata?"),
+        h("p", {}, "Un bulto más barato no siempre rinde más. Aquí se divide el precio del bulto entre los kilos de nitrógeno, fósforo y potasio que trae. El primero es el que más nutriente da por cada peso."),
         h("div", { class: "tabla-scroll" }, h("table", {},
-          h("thead", {}, h("tr", {}, ["Producto", "Recomendación", enDep ? `Precio en ${perfil.departamento}` : "Precio nacional", "Frente a 2 años", "Estimado en 6 meses", "Rango de 80 %", "Por qué"].map((t) => h("th", {}, t)))),
-          h("tbody", {}, lista.map((r) => {
-            const l = local(r), f = r.pron.at(-1);
-            return h("tr", {},
-              h("td", {}, `${r.producto} (${r.presentacion})`),
-              h("td", {}, etiqueta(r)),
-              h("td", {}, l ? pesos(l.precio) : `${pesos(r.precio)}${enDep ? " (nacional)" : ""}`),
-              h("td", { class: "celda-barra", title: `Mínimo ${pesos(r.minimo_24m)}, máximo ${pesos(r.maximo_24m)}` },
-                h("span", { class: "posicion" }, h("i", { style: `left:${Math.round(r.posicion_24m * 100)}%` })),
-                h("span", { class: "pequeno" }, r.posicion_24m <= 0.33 ? "Barato" : r.posicion_24m >= 0.67 ? "Caro" : "Medio")),
-              h("td", {}, `${pesos(f.valor)} (${pct(+r.var_6m_pct)})`),
-              h("td", {}, `${pesos(f.li80)} a ${pesos(f.ls80)}`),
-              h("td", { class: "motivo" }, r.motivo));
-          }))))),
-      ...(nutri.length ? [h("div", { class: "panel" }, h("h2", {}, "Fertilizantes: cuánto cuesta cada kilo de nutriente"),
-        h("p", {}, "Un bulto más barato no siempre rinde más. Aquí se divide el precio entre los kilos de nitrógeno, fósforo y potasio que trae cada bulto."),
-        h("div", { class: "tabla-scroll" }, h("table", {},
-          h("thead", {}, h("tr", {}, ["Fertilizante", "Precio del bulto", "Kilos de nutriente", "Precio por kilo de nutriente", "", "Recomendación"].map((t) => h("th", {}, t)))),
+          h("thead", {}, h("tr", {}, ["Abono", "Precio del bulto", "Kilos de nutriente", "Precio por kilo de nutriente", "", "Recomendación"].map((t) => h("th", {}, t)))),
           h("tbody", {}, nutri.map((r, i) => h("tr", { class: i === 0 ? "elegido" : "" },
-            h("td", {}, `${r.producto} (${r.presentacion})`), h("td", {}, pesos(r.precio)), h("td", {}, numero(r.kg_nutriente, 1)),
+            h("td", {}, nombreProd(r)), h("td", {}, pesos(r.precio)), h("td", {}, numero(r.kg_nutriente, 1)),
             h("td", {}, pesos(r.precio_kg_nutriente)),
             h("td", { class: "celda-barra" }, h("span", { class: "medidor", style: `width:${Math.round(r.precio_kg_nutriente / maxNutri * 100)}%` })),
             h("td", {}, etiqueta(r))))))),
-        h("p", { class: "pequeno" }, "Suma de N, P₂O₅ y K₂O según el grado del producto, con el precio mediano nacional. Cada cultivo necesita una proporción distinta de nutrientes: use esta tabla para comparar productos parecidos y consulte su análisis de suelo."))] : []),
+        h("p", { class: "pequeno" }, "Cada cultivo necesita una mezcla distinta de nutrientes. Use esta tabla para comparar abonos parecidos y consulte su análisis de suelo."))] : []),
     );
   }
-  sGrupo.addEventListener("change", dibujar);
+  buscar.addEventListener("input", dibujar);
+
   pagina(
     h("h1", {}, "Qué comprar hoy"),
-    h("p", {}, "Cada producto tiene su propio pronóstico de precio a seis meses. La recomendación combina dos cosas: qué tan caro está hoy frente a los últimos dos años y hacia dónde apunta el rango estimado."),
-    h("div", { class: "filtros" }, h("label", {}, "Grupo", sGrupo)),
+    h("p", {}, "Vea qué productos están a buen precio hoy y cuáles conviene dejar para después."),
+    h("div", { class: "ayuda" },
+      h("p", {}, h("span", { class: "rec comprar" }, "Buen momento para comprar"), " está barato frente a los últimos dos años, o se espera que suba."),
+      h("p", {}, h("span", { class: "rec esperar" }, "Mejor esperar"), " está caro, o se espera que baje."),
+      h("p", {}, h("span", { class: "rec normal" }, "Precio normal"), " no hay una señal clara: compre lo que necesite.")),
+    tipos,
+    h("div", { class: "filtros" }, h("label", {}, "Grupo", sGrupo), h("label", {}, "Buscar", buscar)),
+    h("div", { class: "chips", role: "group", "aria-label": "Filtrar por recomendación" }, chips),
     salida,
-    h("p", { class: "pequeno" }, "Pronóstico del precio mediano nacional de SIPSA-I. Para cada producto se comparan dos modelos en 18 meses de validación y se publica el de menor error; si ninguno mejora a mantener el último precio, la estimación central es el precio de hoy. Es una ayuda para decidir, no una garantía: confirme con cotizaciones."),
+    h("p", { class: "pequeno" }, enDep ? `Precios de ${perfil.departamento} cuando hay dato; si no, el del país. ` : "Precios del país. Elija su departamento en Mi mercado para ver los de su zona. ",
+      "Los alimentos son precios mayoristas (plazas y centrales de abastos, DANE): en la tienda cuestan más, pero suben y bajan parecido. Los insumos son precios de almacén. La estimación a seis meses es una ayuda para decidir, no una garantía."),
   );
-  await dibujar();
+  dibujar();
 }
 
 // ---------- Inicio ----------
 async function inicio() {
   const [b, mercado, canasta, productos] = await Promise.all([base(), leerMercado(), calcularCanasta(), leerProductos()]);
-  const sugeridos = [...productos.values()].filter((r) => r.recomendacion === "comprar")
-    .sort((x, y) => (x.grupo === "Fertilizantes" ? 0 : 1) - (y.grupo === "Fertilizantes" ? 0 : 1) || x.posicion_24m - y.posicion_24m).slice(0, 5);
   const { count: sinLeer } = await db.from("alerta_evento").select("id", { count: "exact", head: true }).eq("leida", false);
-  const total = resumen(b, "total");
+  const todos = [...productos.values()];
+  const mejores = (insumo, n) => todos.filter((r) => r.recomendacion === "comprar" && esInsumo(r.grupo) === insumo)
+    .sort((x, y) => x.posicion_24m - y.posicion_24m).slice(0, n);
   const presion = presionExterna(mercado);
-  const trm = mercado.filter((f) => f.trm != null).at(-1);
   const tarjeta = (titulo, serie) => {
     const s = senal(b, serie);
     return h("div", { class: `senal ${s.tipo}` }, h("span", { class: "pequeno" }, titulo), h("strong", {}, s.titulo), h("p", {}, s.texto));
   };
-  const saludo = canasta.perfil.nombre ? `Hola, ${canasta.perfil.nombre}` : "Resumen para decidir sus compras";
+  const accion = (ruta, icono, titulo, texto) => h("a", { class: "accion", href: `#${ruta}` },
+    h("span", { class: "icono", "aria-hidden": "true" }, icono), h("strong", {}, titulo), h("span", {}, texto));
+  const sinDep = canasta.perfil.departamento === "Nacional";
 
   pagina(
-    h("h1", {}, saludo),
-    h("p", {}, `Datos oficiales hasta ${formatoMes(fechaUTC(b.corrida.fecha_corte))}. ${canasta.perfil.departamento === "Nacional" ? "Elija su departamento en Mi canasta para ver precios de su zona." : `Precios de referencia: ${canasta.perfil.departamento}.`}`),
-    h("div", { class: "cifras" },
-      h("div", { class: "cifra" }, h("span", {}, "Índice de insumos, último dato"), h("strong", {}, numero(total.ultimo))),
-      h("div", { class: "cifra" }, h("span", {}, "Variación estimada a 6 meses"), h("strong", {}, pct((total.final.valor / total.ultimo - 1) * 100))),
-      ...(presion ? [h("div", { class: "cifra" }, h("span", {}, "Urea importada en pesos, 3 meses"), h("strong", {}, pct(presion.cambio)))] : []),
-      ...(trm ? [h("div", { class: "cifra" }, h("span", {}, `Dólar (TRM), ${formatoMes(fechaUTC(trm.fecha))}`), h("strong", {}, pesos(trm.trm)))] : [])),
-    h("h2", {}, "¿Comprar ahora o esperar?"),
-    h("div", { class: "senales" }, tarjeta("Fertilizantes", "fertilizantes"), tarjeta("Plaguicidas", "plaguicidas")),
-    ...(presion ? [h("p", {}, `Mercado internacional: ${presion.lectura}. El costo de traer urea al país cambió ${pct(presion.cambio)} en tres meses; ese movimiento suele llegar al almacén con algunos meses de retraso. `, h("a", { href: "#mercado" }, "Ver mercado"))] : []),
-    h("p", { class: "pequeno" }, "La señal sale del intervalo de 80 % del pronóstico. En la prueba final el modelo no superó a la referencia de mantener el último valor: úsela como apoyo y confirme con cotizaciones."),
-    h("div", { class: "panel" }, h("h2", {}, "Qué comprar hoy"),
-      sugeridos.length
-        ? h("ul", { class: "lista-simple" }, sugeridos.map((r) => h("li", {},
-            h("span", {}, h("strong", {}, `${r.producto} (${r.presentacion})`), ` · ${pesos(r.precio)} · ${r.motivo}`), etiqueta(r))))
-        : h("p", {}, "Hoy ningún producto tiene señal de compra."),
-      h("p", {}, h("a", { href: "#comprar" }, "Ver la recomendación de todos los productos"))),
-    h("div", { class: "panel" }, h("h2", {}, "Mi canasta de insumos"),
-      canasta.total
-        ? h("div", {}, h("div", { class: "cifras" },
-            h("div", { class: "cifra" }, h("span", {}, "Costo hoy"), h("strong", {}, pesos(canasta.total.hoy))),
-            h("div", { class: "cifra" }, h("span", {}, "Estimado en 6 meses"), h("strong", {}, pesos(canasta.total.central))),
-            h("div", { class: "cifra" }, h("span", {}, "Rango"), h("strong", {}, `${pesos(canasta.total.bajo)} a ${pesos(canasta.total.alto)}`))),
-          h("a", { href: "#canasta" }, "Ver el detalle por producto"))
-        : h("p", {}, "Aún no tiene productos. ", h("a", { href: "#canasta" }, "Arme su canasta"), " para ver cuánto cuesta hoy en su departamento y cuánto podría costar en seis meses.")),
-    h("div", { class: "panel" }, h("h2", {}, "Alertas"),
-      h("p", {}, sinLeer ? `Tiene ${sinLeer} ${sinLeer === 1 ? "alerta sin leer" : "alertas sin leer"}. ` : "No tiene alertas sin leer. ", h("a", { href: "#alertas" }, sinLeer ? "Revisarlas" : "Crear o revisar reglas"))),
+    h("h1", {}, canasta.perfil.nombre ? `Hola, ${canasta.perfil.nombre}` : "Bienvenido"),
+    h("p", {}, "Aquí puede ver qué alimentos e insumos están a buen precio, cuánto le cuesta su mercado y dónde se consigue más barato."),
+    ...(sinDep ? [h("p", { class: "aviso" }, "Para ver los precios de su zona, ", h("a", { href: "#canasta" }, "elija su departamento"), ". Solo toma un momento.")] : []),
+    h("h2", {}, "¿Qué quiere hacer?"),
+    h("div", { class: "acciones" },
+      accion("comprar", "🛒", "Qué comprar hoy", "Productos a buen precio y los que conviene esperar."),
+      accion("canasta", "📋", "Mi mercado", canasta.total ? `Hoy le cuesta ${pesos(canasta.total.hoy)}.` : "Arme su lista y vea cuánto le cuesta."),
+      accion("regional", "📍", "Dónde es más barato", "Compare el precio entre departamentos."),
+      accion("precios", "📈", "Cómo ha cambiado el precio", "La historia de cada producto y lo que se espera.")),
+    h("div", { class: "panel" }, h("h2", {}, "Alimentos a buen precio hoy"),
+      mejores(false, 6).length
+        ? h("div", { class: "tarjetas" }, mejores(false, 6).map((r) => tarjetaProducto(r, null, false, false)))
+        : h("p", {}, "Hoy ningún alimento tiene señal de buen precio."),
+      h("p", {}, h("a", { class: "boton", href: "#comprar" }, "Ver todos los productos"))),
+    h("div", { class: "panel" }, h("h2", {}, "Insumos del campo"),
+      h("div", { class: "senales" }, tarjeta("Abonos (fertilizantes)", "fertilizantes"), tarjeta("Plaguicidas", "plaguicidas")),
+      ...(mejores(true, 3).length ? [h("p", {}, "A buen precio hoy: ", mejores(true, 3).map((r) => nombreProd(r)).join(", "), ".")] : []),
+      ...(presion ? [h("p", { class: "pequeno" }, `Mercado internacional: ${presion.lectura}. Traer urea al país cuesta ${pct(presion.cambio)} frente a hace tres meses. `, h("a", { href: "#mercado" }, "Ver más"))] : [])),
+    h("div", { class: "panel" }, h("h2", {}, "Avisos"),
+      h("p", {}, sinLeer ? `Tiene ${sinLeer} ${sinLeer === 1 ? "aviso sin leer" : "avisos sin leer"}. ` : "No tiene avisos sin leer. ", h("a", { href: "#alertas" }, sinLeer ? "Verlos" : "Crear un aviso de precio"))),
+    h("p", { class: "pequeno" }, `Precios de alimentos e insumos del DANE. Índice de insumos de la UPRA hasta ${formatoMes(fechaUTC(b.corrida.fecha_corte))}. Las estimaciones son una ayuda para decidir: confirme el precio antes de comprar.`),
   );
 }
 
@@ -612,14 +657,12 @@ async function canasta() {
         deps.map((d) => h("option", { selected: d.departamento === perfil.departamento }, d.departamento)))),
       h("label", {}, "Cultivo principal", h("input", { name: "cultivo", maxlength: 60, value: perfil.cultivo ?? "", placeholder: "Papa, arroz, café…" })),
       h("label", {}, "Área (hectáreas)", h("input", { name: "area_ha", type: "number", min: 0, step: "0.1", value: perfil.area_ha ?? "" }))),
-    h("button", { class: "secundario" }, "Guardar perfil"), msgPerfil);
+    h("button", { class: "secundario" }, "Guardar mis datos"), msgPerfil);
 
-  const grupos = [...new Set(catalogo.map((f) => f.grupo))];
-  const sGrupo = h("select", {}, grupos.map((g) => h("option", {}, g)));
   const sProd = h("select", { name: "producto" });
   const llenar = () => sProd.replaceChildren(...catalogo.filter((f) => f.grupo === sGrupo.value).map((f) =>
-    h("option", { value: JSON.stringify(f) }, `${f.producto} (${f.presentacion})`)));
-  sGrupo.addEventListener("change", llenar);
+    h("option", { value: JSON.stringify(f) }, nombreProd(f))));
+  const { sGrupo, nodo: tipos } = selectorGrupo(ordenarGrupos(new Set(catalogo.map((f) => f.grupo))), () => llenar());
   llenar();
   const cantidad = h("input", { type: "number", min: "0.5", step: "0.5", value: 1, required: true });
   const formItem = h("form", {
@@ -632,12 +675,13 @@ async function canasta() {
       canasta();
     },
   },
-    h("div", { class: "fila-form" }, h("label", {}, "Grupo", sGrupo), h("label", {}, "Producto", sProd), h("label", {}, "Cantidad (unidades de esa presentación)", cantidad)),
-    h("button", {}, "Agregar a la canasta"), msg);
+    tipos,
+    h("div", { class: "fila-form" }, h("label", {}, "Grupo", sGrupo), h("label", {}, "Producto", sProd), h("label", {}, "¿Cuánto compra? (kilos, unidades o bultos)", cantidad)),
+    h("button", {}, "＋ Agregar a mi mercado"), msg);
 
   const ahorro = filas.reduce((a, f) => a + (f.barato && f.usado && f.barato.precio < f.usado.precio ? (f.usado.precio - f.barato.precio) * f.it.cantidad : 0), 0);
   const cuerpo = filas.map((f) => h("tr", {},
-    h("td", {}, `${f.it.producto} (${f.it.presentacion})`),
+    h("td", {}, nombreProd(f.it)),
     h("td", {}, numero(f.it.cantidad, 1)),
     h("td", {}, f.usado ? `${pesos(f.usado.precio)}${f.esLocal ? "" : " (nacional)"}` : "Sin precio reciente"),
     h("td", {}, f.sub ? pesos(f.sub) : "—"),
@@ -647,11 +691,11 @@ async function canasta() {
     h("td", {}, h("button", { class: "secundario", onclick: async () => { await db.from("canasta_item").delete().eq("id", f.it.id); canasta(); } }, "Quitar"))));
 
   pagina(
-    h("h1", {}, "Mi canasta de insumos"),
-    h("p", {}, "Arme la lista de lo que compra para su cultivo. La plataforma la valora en pesos con el precio mediano de su departamento según SIPSA-I, le muestra dónde está más barato y cuánto podría costar en seis meses."),
-    h("div", { class: "panel" }, h("h2", {}, "Mi perfil"), formPerfil),
-    h("div", { class: "panel" }, h("h2", {}, "Agregar producto"), formItem),
-    h("div", { class: "panel" }, h("h2", {}, `Costo de la canasta en ${perfil.departamento === "Nacional" ? "el país" : perfil.departamento}`),
+    h("h1", {}, "Mi mercado"),
+    h("p", {}, "Haga la lista de lo que compra: alimentos para la casa o insumos para el cultivo. Le mostramos cuánto cuesta hoy en su departamento, dónde está más barato y cuánto podría costar en seis meses."),
+    h("div", { class: "panel" }, h("h2", {}, "1. Mis datos"), h("p", { class: "pequeno" }, "Con su departamento le mostramos los precios de su zona."), formPerfil),
+    h("div", { class: "panel" }, h("h2", {}, "2. Agregar un producto"), formItem),
+    h("div", { class: "panel" }, h("h2", {}, `3. Lo que cuesta mi mercado en ${perfil.departamento === "Nacional" ? "el país" : perfil.departamento}`),
       total
         ? h("div", {},
             h("div", { class: "cifras" },
@@ -670,12 +714,11 @@ async function canasta() {
 // ---------- Comparador regional ----------
 async function regional() {
   const [catalogo, perfil] = await Promise.all([q(db.from("sipsa_catalogo").select("*").order("grupo").order("producto")), leerPerfil()]);
-  const grupos = [...new Set(catalogo.map((f) => f.grupo))];
-  const sGrupo = h("select", {}, grupos.map((g) => h("option", {}, g)));
   const sProd = h("select");
   const salida = h("div");
   const llenar = () => sProd.replaceChildren(...catalogo.filter((f) => f.grupo === sGrupo.value).map((f) =>
-    h("option", { value: JSON.stringify(f) }, `${f.producto} (${f.presentacion})`)));
+    h("option", { value: JSON.stringify(f) }, nombreProd(f))));
+  const { sGrupo, nodo: tipos } = selectorGrupo(ordenarGrupos(new Set(catalogo.map((f) => f.grupo))), () => { llenar(); dibujar(); });
 
   async function dibujar() {
     const filas = await q(db.from("sipsa_precio_reciente").select("*").match(JSON.parse(sProd.value)).order("precio"));
@@ -699,15 +742,15 @@ async function regional() {
           h("td", {}, pct((f.precio / nacional.precio - 1) * 100)),
           h("td", {}, formatoMes(fechaUTC(f.fecha))), h("td", {}, String(f.n_registros)))))))));
   }
-  sGrupo.addEventListener("change", () => { llenar(); dibujar(); });
   sProd.addEventListener("change", dibujar);
   llenar();
   pagina(
-    h("h1", {}, "Comparador regional"),
-    h("p", {}, "El mismo producto no cuesta igual en todo el país. Compare el precio mediano por departamento antes de cotizar o de organizar una compra conjunta."),
+    h("h1", {}, "Dónde es más barato"),
+    h("p", {}, "El mismo producto no cuesta igual en todo el país. Elija un producto y vea en qué departamento está más barato y en cuál más caro."),
+    tipos,
     h("div", { class: "filtros" }, h("label", {}, "Grupo", sGrupo), h("label", {}, "Producto", sProd)),
     salida,
-    h("p", { class: "pequeno" }, "Mediana de los precios reportados al DANE (SIPSA-I) en los últimos tres meses. Pocos registros hacen el dato menos confiable. No incluye transporte ni descuentos por volumen."),
+    h("p", { class: "pequeno" }, "Precio del medio entre los reportados al DANE en los últimos tres meses. Con pocos registros el dato es menos confiable. No incluye transporte ni descuentos por cantidad."),
   );
   await dibujar();
 }
@@ -756,7 +799,7 @@ async function mercado() {
 
 // ---------- Navegacion ----------
 const RUTAS = { inicio, comprar, proyeccion, canasta, regional, mercado, presupuesto, alertas, reportes, precios, monitoreo };
-const NOMBRES = { inicio: "Inicio", comprar: "Qué comprar hoy", proyeccion: "Proyección", canasta: "Mi canasta", regional: "Comparador regional", mercado: "Mercado", presupuesto: "Presupuesto", alertas: "Alertas", reportes: "Reportes", precios: "Precios SIPSA", monitoreo: "Monitoreo" };
+const NOMBRES = { inicio: "Inicio", comprar: "Qué comprar hoy", proyeccion: "Índice de insumos", canasta: "Mi mercado", regional: "Dónde es más barato", mercado: "Mercado internacional", presupuesto: "Presupuesto", alertas: "Avisos", reportes: "Reportes", precios: "Cómo ha cambiado el precio", monitoreo: "Qué tan bien acierta" };
 async function navegar() {
   const ruta = RUTAS[location.hash.slice(1)] ? location.hash.slice(1) : "inicio";
   document.querySelectorAll(".riel nav a").forEach((a) => {

@@ -97,7 +97,7 @@ def cargar(incluir_sipsa=True):
     cli.upsert("mercado_mensual", _registros(mer), "fecha")
 
     if incluir_sipsa:
-        pr = pd.read_csv(c.PROCESSED / "sipsa_precios.csv")
+        pr = pd.concat([pd.read_csv(c.PROCESSED / n) for n in ("sipsa_precios.csv", "alimentos_precios.csv")], ignore_index=True)
         cli.upsert("sipsa_precio", _registros(pr), "grupo,producto,presentacion,departamento,fecha")
         co = pd.read_csv(c.PROCESSED / "sipsa_contraste.csv").melt("fecha", var_name="grupo", value_name="valor").dropna()
         cli.upsert("sipsa_contraste", _registros(co), "grupo,fecha")

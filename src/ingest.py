@@ -18,8 +18,22 @@ def _bajar(url, destino, forzar=False):
     return destino
 
 
+def descargar_mayoristas(forzar=False):
+    """Baja un archivo por ano. Los anos cerrados se conservan; el actual y el anterior se refrescan."""
+    c.MAYORISTAS.mkdir(parents=True, exist_ok=True)
+    actual = pd.Timestamp.now().year
+    urls = {**c.URL_MAYORISTAS, **{a: c.URL_MAYORISTAS_ANUAL.format(anio=a) for a in range(2024, actual + 1)}}
+    for anio, url in urls.items():
+        try:
+            _bajar(url, c.MAYORISTAS / f"{anio}.xlsx", forzar and anio >= actual - 1)
+        except requests.RequestException:
+            if anio < actual:   # el archivo del ano en curso puede no existir en enero
+                raise
+
+
 def descargar_todo(forzar=False):
     c.RAW.mkdir(parents=True, exist_ok=True)
+    descargar_mayoristas(forzar)
     _bajar(c.URL_SIPSA, c.SIPSA_XLSX, forzar)
     _bajar(c.URL_PINK_SHEET, c.PINK_SHEET_XLSX, forzar)
     if forzar or not c.TRM_CSV.exists():

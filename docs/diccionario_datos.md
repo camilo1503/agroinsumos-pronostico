@@ -50,6 +50,10 @@
 | `recomendacion`, `motivo` | `comprar`, `esperar` o `normal`, y la razón |
 | `kg_nutriente`, `precio_kg_nutriente` | Kilos de N + P₂O₅ + K₂O por unidad y precio por kilo de nutriente |
 
+### `data/processed/alimentos_precios.csv`
+
+Mismos campos que `sipsa_precios.csv`, para 64 alimentos de la canasta familiar. `precio` es la mediana mensual de los precios mayoristas entre mercados (COP por kilogramo; huevos por unidad y aceite por litro) y `n_registros` el número de mercados. En la base de datos se guarda en la misma tabla `sipsa_precio`.
+
 ### `data/processed/sipsa_contraste.csv`
 
 Índice encadenado por grupo, construido con la mediana de las variaciones mensuales de series comparables. Sirve para contrastar tendencias y no es un índice oficial.

@@ -8,11 +8,11 @@ Abra la plataforma, elija **Crear una cuenta** o inicie sesión con su correo y 
 
 **Inicio.** Resume lo necesario para decidir una compra: último índice, variación estimada, costo de importar urea, TRM y la señal «comprar ahora o esperar». Hay señal de alza o de baja solo cuando todo el intervalo de 80 % queda por encima o por debajo del nivel actual; si no, la plataforma dice «sin señal clara».
 
-**Qué comprar hoy.** Lista de productos con su recomendación: comprar ahora, precio normal o conviene esperar. Muestra el precio de su departamento, qué tan caro está frente a los últimos dos años, el precio estimado a seis meses con su rango y el motivo. Para fertilizantes incluye el precio por kilo de nutriente, que permite comparar bultos de distinto grado.
+**Qué comprar hoy.** Elija arriba entre alimentos e insumos del campo, y luego el grupo, o escriba el nombre del producto en el buscador. Cada tarjeta muestra el precio de hoy, una barra que va de barato a caro frente a los últimos dos años y la recomendación: buen momento para comprar, precio normal o mejor esperar. El botón «Agregar a mi mercado» lo suma a su lista. Muestra el precio de su departamento, qué tan caro está frente a los últimos dos años, el precio estimado a seis meses con su rango y el motivo. Para fertilizantes incluye el precio por kilo de nutriente, que permite comparar bultos de distinto grado.
 
-**Mi canasta.** Guarde su perfil (departamento, cultivo y área) y agregue los productos que compra con su cantidad. Verá el costo de hoy con el precio mediano de su departamento, el costo por hectárea, el departamento donde cada producto está más barato y el costo estimado a seis meses con su rango.
+**Mi mercado.** Guarde su perfil (departamento, cultivo y área) y agregue los productos que compra con su cantidad. Verá el costo de hoy con el precio mediano de su departamento, el costo por hectárea, el departamento donde cada producto está más barato y el costo estimado a seis meses con su rango.
 
-**Comparador regional.** Elija un producto y compare su precio mediano por departamento. Su departamento aparece resaltado. Fíjese en la columna de registros: con pocos registros el dato es menos confiable.
+**Dónde es más barato.** Elija un producto y compare su precio mediano por departamento. Su departamento aparece resaltado. Fíjese en la columna de registros: con pocos registros el dato es menos confiable.
 
 **Mercado.** Muestra los precios internacionales de urea, DAP y cloruro de potasio, la TRM, y el costo de importar un bulto de urea frente a su precio en almacén.
 
@@ -24,7 +24,7 @@ Abra la plataforma, elija **Crear una cuenta** o inicie sesión con su correo y 
 
 **Reportes.** Descargue CSV o use **Imprimir o guardar PDF** para proyección, canasta, presupuesto y alertas.
 
-**Precios SIPSA.** Consulte precios medianos por producto y departamento, y compare el subíndice con la variación de precios observados.
+**Cómo ha cambiado el precio.** Consulte precios medianos por producto y departamento, y compare el subíndice con la variación de precios observados.
 
 **Monitoreo.** Compare lo estimado seis meses antes con lo observado y revise si el error reciente supera al de validación.
 

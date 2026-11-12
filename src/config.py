@@ -11,6 +11,16 @@ ANEXO_UPRA = RAW / "AnexoAgo26_20260921.xlsx"
 SIPSA_XLSX = RAW / "sipsa_departamento.xlsx"
 PINK_SHEET_XLSX = RAW / "CMO-Historical-Data-Monthly.xlsx"
 TRM_CSV = RAW / "trm_mensual.csv"
+MAYORISTAS = RAW / "mayoristas"
+
+# Series historicas de precios mayoristas de alimentos (DANE, SIPSA). Los anos cerrados no cambian.
+_DANE = "https://www.dane.gov.co/files"
+URL_MAYORISTAS = {
+    **{a: f"{_DANE}/investigaciones/agropecuario/sipsa/series-historicas/series-historicas-precios-mayoristas-{a}.xlsx"
+       for a in range(2018, 2023)},
+    2023: f"{_DANE}/operaciones/SIPSA/anex-SIPSA-SerieHistoricaMayorista-Dic2023.xlsx",
+}
+URL_MAYORISTAS_ANUAL = _DANE + "/operaciones/SIPSA/anex-SIPSA-SerieHistoricaMayorista-{anio}.xlsx"
 
 URL_SIPSA = "https://www.dane.gov.co/files/operaciones/SIPSA/anex-SIPSAInsumos-SeriesHistoricasDep-2018-2026.xlsx"
 URL_UPRA_API = "https://www.datos.gov.co/resource/gwbi-fnzs.csv?$limit=5000"

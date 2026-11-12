@@ -22,11 +22,11 @@ CANDIDATOS = {"naive": naive, "ets": ets}
 def series_nacionales(precios):
     """Serie mensual por producto. Rellena huecos de hasta tres meses y conserva el tramo final continuo."""
     nac = precios[precios["departamento"] == "Nacional"]
-    ultimo = nac["fecha"].max()
+    ultimo_grupo = nac.groupby("grupo")["fecha"].max()   # insumos y alimentos se publican en fechas distintas
     salida = {}
     for clave, g in nac.groupby(CLAVE):
         y = g.set_index("fecha")["precio"].sort_index().asfreq("MS").interpolate(limit=3)
-        if y.index[-1] < ultimo - pd.DateOffset(months=MAX_REZAGO):
+        if y.index[-1] < ultimo_grupo[clave[0]] - pd.DateOffset(months=MAX_REZAGO):
             continue
         faltantes = np.flatnonzero(y.isna().to_numpy())
         if len(faltantes):
@@ -111,7 +111,8 @@ def _un_producto(clave, y):
 
 
 def correr():
-    precios = pd.read_csv(c.PROCESSED / "sipsa_precios.csv", parse_dates=["fecha"])
+    archivos = [c.PROCESSED / n for n in ("sipsa_precios.csv", "alimentos_precios.csv")]
+    precios = pd.concat([pd.read_csv(a, parse_dates=["fecha"]) for a in archivos if a.exists()], ignore_index=True)
     series = series_nacionales(precios)
     salida = Parallel(n_jobs=-1)(delayed(_un_producto)(k, y) for k, y in series.items())
     pron = pd.DataFrame([f for p, _ in salida for f in p])

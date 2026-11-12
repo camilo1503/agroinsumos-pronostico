@@ -4,6 +4,7 @@ import json
 import numpy as np
 import pandas as pd
 
+from . import alimentos
 from . import config as c
 from .ingest import comparar_con_api, extender_con_api
 
@@ -138,6 +139,8 @@ def correr():
     precios, contraste = preparar_sipsa()
     precios.to_csv(c.PROCESSED / "sipsa_precios.csv", index=False)
     contraste.round(3).to_csv(c.PROCESSED / "sipsa_contraste.csv")
+    if any(c.MAYORISTAS.glob("*.xlsx")):
+        alimentos.preparar().to_csv(c.PROCESSED / "alimentos_precios.csv", index=False)
     preparar_mercado().to_csv(c.PROCESSED / "mercado_mensual.csv", index_label="fecha")
 
     mapa = {"Fertilizantes": "T_Fertilizantes", "Herbicidas": "T_Herbicidas",

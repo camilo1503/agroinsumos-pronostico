@@ -1,6 +1,6 @@
-# Pronóstico de variaciones de precios de agroinsumos colombianos mediante CRISP-ML(Q)
+# Pronóstico de precios de alimentos e insumos agrícolas colombianos mediante CRISP-ML(Q)
 
-Proyecto de la materia Machine Learning. Pronostica a seis meses el índice nacional de precios de insumos agrícolas de la UPRA, lo compara con modelos de referencia y publica el resultado en una plataforma con inicio de sesión, pronóstico de precio por producto con recomendación de compra, canasta de insumos en pesos, comparador regional, mercado internacional, proyección, presupuesto, alertas, reportes y monitoreo.
+Proyecto de la materia Machine Learning. Pronostica a seis meses el índice nacional de precios de insumos agrícolas de la UPRA, lo compara con modelos de referencia y publica el resultado en una plataforma con inicio de sesión, pronóstico de precio por producto (64 alimentos de la canasta familiar y los insumos de SIPSA-I) con recomendación de compra, canasta de insumos en pesos, comparador regional, mercado internacional, proyección, presupuesto, alertas, reportes y monitoreo.
 
 ## Sitio
 
@@ -82,6 +82,7 @@ Con ngrok instalado y autenticado, ejecute `iniciar_sitio.bat`. El sitio queda e
 
 - UPRA y Datos Abiertos Colombia: [índice de precios de insumos agrícolas](https://www.datos.gov.co/Agricultura-y-Desarrollo-Rural/-ndice-de-precios-de-insumos-agr-colas/gwbi-fnzs/about_data)
 - DANE: [SIPSA-I, series históricas](https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/componente-insumos-1/componente-insumos-historicos)
+- DANE: [SIPSA, precios mayoristas de alimentos](https://www.dane.gov.co/index.php/estadisticas-por-tema/agropecuario/sistema-de-informacion-de-precios-sipsa/componente-precios-mayoristas)
 - Superintendencia Financiera: [TRM histórica](https://www.datos.gov.co/Econom-a-y-Finanzas/Tasa-de-Cambio-Representativa-del-Mercado-Historic/mcec-87by)
 - Banco Mundial: [Commodity Markets, Pink Sheet](https://www.worldbank.org/en/research/commodity-markets)
 
