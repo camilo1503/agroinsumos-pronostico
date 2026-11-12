@@ -56,12 +56,12 @@
     "dap_usd": "2026-10"
   },
   "productos": {
-    "productos": 54,
-    "con_ets": 18,
+    "productos": 118,
+    "con_ets": 43,
     "recomendaciones": {
-      "normal": 36,
-      "comprar": 14,
-      "esperar": 4
+      "normal": 85,
+      "comprar": 27,
+      "esperar": 6
     }
   }
 }
