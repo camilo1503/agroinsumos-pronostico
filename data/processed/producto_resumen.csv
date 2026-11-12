@@ -1,14 +1,14 @@
 grupo,producto,presentacion,fecha_precio,precio,minimo_24m,maximo_24m,posicion_24m,var_12m_pct,var_6m_pct,modelo,mae_modelo,mae_persistencia,recomendacion,motivo,kg_nutriente,precio_kg_nutriente
 Fertilizantes,10-20-20,50 kilogramos,2026-09-01,167984.09,166833.33,196612.5,0.039,-7.67,0.0,naive,5378.05,5378.05,comprar,Está cerca de su precio más bajo en dos años y no se estima una baja.,25.0,6719.36
 Fertilizantes,10-30-10,50 kilogramos,2026-09-01,212019.64,171500.0,222051.19,0.802,6.69,0.0,naive,7105.86,7105.86,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",25.0,8480.79
-Fertilizantes,15-15-15,50 kilogramos,2026-09-01,169000.0,142466.67,177743.0,0.752,13.64,-5.94,ets,7030.55,8180.18,esperar,Está cerca de su precio más alto en dos años y la estimación central es a la baja.,22.5,7511.11
+Fertilizantes,15-15-15,50 kilogramos,2026-09-01,169000.0,142466.67,177743.0,0.752,13.64,-5.94,ets,7030.57,8180.18,esperar,Está cerca de su precio más alto en dos años y la estimación central es a la baja.,22.5,7511.11
 Fertilizantes,17-6-18-2(Mg),50 kilogramos,2026-09-01,174222.22,137381.82,188083.33,0.727,16.2,-13.53,ets,6382.81,8025.57,esperar,Está cerca de su precio más alto en dos años y la estimación central es a la baja.,20.5,8498.64
-Fertilizantes,Agrimins 8-5-0-6,46 kilogramos,2026-09-01,142773.35,122629.17,143480.0,0.966,8.99,-0.98,ets,2749.97,3433.04,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",5.98,23875.14
+Fertilizantes,Agrimins 8-5-0-6,46 kilogramos,2026-09-01,142773.35,122629.17,143480.0,0.966,8.99,-0.98,ets,2749.99,3433.04,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",5.98,23875.14
 Fertilizantes,Cal Dolomita,50 kilogramos,2026-09-01,19500.0,16750.0,19500.0,1.0,12.88,0.0,naive,337.39,337.39,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
 Fertilizantes,Cloruro de Potasio 0-0-60,50 kilogramos,2026-09-01,123916.67,102565.0,131633.33,0.735,10.3,-5.56,ets,3870.98,4437.76,esperar,Está cerca de su precio más alto en dos años y la estimación central es a la baja.,30.0,4130.56
 Fertilizantes,Crecer 500,900 gramos,2026-09-01,13550.24,12697.5,13569.23,0.978,4.05,0.0,naive,158.99,158.99,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
 Fertilizantes,Fosfato Diamónico (DAP) 18-46-0,50 kilogramos,2026-09-01,234100.0,172650.0,239675.0,0.917,12.89,-3.6,ets,6274.87,10646.56,esperar,Está cerca de su precio más alto en dos años y la estimación central es a la baja.,32.0,7315.62
-Fertilizantes,Nutrifoliar Completo,1 litro,2026-09-01,32000.0,27350.0,32000.0,1.0,6.62,1.35,ets,529.92,658.73,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fertilizantes,Nutrifoliar Completo,1 litro,2026-09-01,32000.0,27350.0,32000.0,1.0,6.62,1.35,ets,537.24,658.73,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
 Fertilizantes,Nutrimins,1 litro,2026-09-01,20275.0,18500.0,20326.32,0.972,3.29,2.65,ets,191.85,350.45,comprar,Todo el rango estimado a seis meses queda por encima del precio de hoy.,,
 Fertilizantes,Sulfato de Amonio (SAM) 21-0-0-24(S),50 kilogramos,2026-09-01,89016.67,72645.0,98350.0,0.637,10.88,0.0,naive,4988.51,4988.51,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",10.5,8477.78
 Fertilizantes,Todo en Uno,1 kilogramo,2026-09-01,11211.81,10703.33,11211.81,1.0,3.01,0.0,naive,119.73,119.73,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
@@ -21,12 +21,12 @@ Fungicidas,Daconil 720 Sc,1 litro,2026-09-01,42344.44,40968.85,42837.5,0.736,0.5
 Fungicidas,Difenoconazol 250 Ec,1 litro,2026-09-01,69250.0,68000.0,85662.5,0.071,-15.03,0.0,naive,4065.7,4065.7,comprar,Está cerca de su precio más bajo en dos años y no se estima una baja.,,
 Fungicidas,Dithane M-45 Wp NT,1 kilogramo,2026-09-01,24133.33,22166.67,25833.33,0.536,1.61,0.0,naive,589.83,589.83,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
 Fungicidas,Elosal 720 Sc,1 litro,2026-09-01,30600.0,27513.33,30600.0,1.0,7.41,3.57,ets,361.66,491.54,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
-Fungicidas,Fitoraz 76 Wp,500 gramos,2026-09-01,29958.33,28306.63,30163.64,0.889,3.81,1.07,ets,258.98,343.88,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
+Fungicidas,Fitoraz 76 Wp,500 gramos,2026-09-01,29958.33,28306.63,30163.64,0.889,3.81,1.07,ets,258.97,343.88,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
 Fungicidas,Mancozeb 80 Wp,1 kilogramo,2026-09-01,22016.67,21336.36,22490.0,0.59,3.19,0.0,naive,316.37,316.37,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
 Fungicidas,Manzate 200 Wp,1 kilogramo,2026-09-01,23940.62,22900.0,23993.33,0.952,4.47,0.0,naive,321.27,321.27,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
 Fungicidas,Mertect 500 Sc,100 centímetros cúbicos,2026-09-01,45415.62,40750.0,45415.62,1.0,2.42,0.0,naive,784.54,784.54,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
 Fungicidas,"Oxicloruro de Cobre 58,8% Wp",1 kilogramo,2026-09-01,15518.85,13599.52,15518.85,1.0,8.93,0.0,naive,324.92,324.92,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
-Fungicidas,Ridomil Gold MZ 68 Wp,375 gramos,2026-09-01,33124.62,30672.0,33124.62,1.0,4.2,2.72,ets,274.04,392.28,comprar,Todo el rango estimado a seis meses queda por encima del precio de hoy.,,
+Fungicidas,Ridomil Gold MZ 68 Wp,375 gramos,2026-09-01,33124.62,30672.0,33124.62,1.0,4.2,2.72,ets,278.29,392.28,comprar,Todo el rango estimado a seis meses queda por encima del precio de hoy.,,
 Fungicidas,Score 250 Ec,100 centímetros cúbicos,2026-09-01,27571.43,26574.4,28275.0,0.586,-0.79,-0.5,ets,342.62,360.19,normal,"Precio en la zona media de los últimos dos años, sin señal clara.",,
 Fungicidas,Trivia Wp,400 gramos,2026-09-01,32647.46,30114.15,32647.46,1.0,6.2,2.85,ets,293.86,406.19,comprar,Todo el rango estimado a seis meses queda por encima del precio de hoy.,,
 Herbicidas,Atrazina 80% Wp,1 kilogramo,2026-09-01,32988.5,32609.09,35666.67,0.124,-1.77,0.0,naive,479.78,479.78,comprar,Está cerca de su precio más bajo en dos años y no se estima una baja.,,
