@@ -1,16 +1,59 @@
 {
   "desde": "2018-12",
-  "hasta": "2026-08",
-  "observaciones": 93,
+  "hasta": "2026-09",
+  "observaciones": 94,
   "meses_ausentes": 0,
   "faltantes_indice_total": 0,
   "columnas_con_faltantes": {
     "T_Otros": 25,
-    "Clorpirifos": 32,
-    "Fipronil": 24,
-    "T_Coadyuvantes": 25,
-    "T_Reguladores": 25,
-    "T_Molusquicidas": 25
+    "Urea 46%": 1,
+    "Urea sulfato": 1,
+    "DAP 18-46": 1,
+    "KCL 0-0-60": 1,
+    "SAM": 1,
+    "15-15-15": 1,
+    "25-4-24": 1,
+    "17-6-18-2": 1,
+    "18-18-18": 1,
+    "31-8-8": 1,
+    "12-24-12": 1,
+    "13-26-6": 1,
+    "15-4-23": 1,
+    "10-20-30": 1,
+    "28-4-0-6": 1,
+    "Glifosato": 1,
+    "Paraquat": 1,
+    "Propanil": 1,
+    "2,4-D + picloram": 1,
+    "2,4-D": 1,
+    "Aminopiralid + 2,4-D": 1,
+    "Diuron": 1,
+    "Glufosinato de amonio": 1,
+    "Picloram": 1,
+    "Oxadiazon": 1,
+    "Metsulfuron metil": 1,
+    "Pendimetalin": 1,
+    "Clorotalonil": 1,
+    "Difenoconazol": 1,
+    "Mancozeb": 1,
+    "Mancozeb + cimoxanil": 1,
+    "Azoxistrobin + difenoconazol": 1,
+    "Dimetomorf": 1,
+    "Tebuconazol + trifloxistrobin": 1,
+    "Propineb + fluopicolide": 1,
+    "Mancozeb + metalaxil-m": 1,
+    "Clorpirifos": 33,
+    "Fipronil": 25,
+    "Metomil": 1,
+    "Tiametoxam + lambdacihalotrina": 1,
+    "Abamectina": 1,
+    "Imidacloprid": 1,
+    "Profenofos + cipermetrina": 1,
+    "Cipermetrina": 1,
+    "Profenofos": 1,
+    "T_Coadyuvantes": 26,
+    "T_Reguladores": 26,
+    "T_Molusquicidas": 26
   },
   "primer_mes_otros_insumos": "2021-01",
   "ultimo_mes_clorpirifos": "2023-12",
@@ -18,7 +61,7 @@
   "cambios_de_canasta": {
     "ene_2024_amplia_canasta": {
       "variacion_mes_pct": -1.63,
-      "z_robusto": -1.02
+      "z_robusto": -1.0
     },
     "sep_2024_excluye_fipronil": {
       "variacion_mes_pct": 0.22,
@@ -39,15 +82,15 @@
     "2026-05"
   ],
   "comparacion_datos_abiertos": {
-    "meses_comparados": 93,
+    "meses_comparados": 94,
     "diferencia_maxima": 0.005,
-    "ultima_fecha_api": "2026-08"
+    "ultima_fecha_api": "2026-09"
   },
   "correlacion_variacion_12m_sipsa_vs_upra": {
-    "Fertilizantes": 0.915,
+    "Fertilizantes": 0.914,
     "Herbicidas": 0.983,
-    "Fungicidas": 0.869,
-    "Insecticidas": 0.958
+    "Fungicidas": 0.868,
+    "Insecticidas": 0.959
   },
   "sipsa_ultima_fecha": "2026-09",
   "exogenas_ultima_fecha": {
